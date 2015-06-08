@@ -20,13 +20,14 @@
 										</td>
 									</tr>
 								@endif
-								<?php $z = 1; ?>
-                                       @foreach($question->given_answers()->where('assignement_id', $assignement->id)->get() as $answer2)
-                                        	<?php $corect=$answer2->answer_id;?>
-                                             	     @if($question->question_type_id == 3 )
+
+					    		<?php $z = 1; ?>
+					    		@foreach($question->given_answers()->where('assignement_id', $assignement->id)->get() as $answer)
+					    		<tr>
+					    			@if($question->question_type_id == 3)
 						    			<td><span class="label label-default">{{Lang::get('messages.answer')}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 						    			<hr>
-						    			{{$answer2->answer}}
+						    			{{$answer->answer}}
 						    			<hr>
 										{{ Lang::get('messages.points')}}: {{$question->points}} 
 										{!! Form::open(['url' => 'test/save_points', 'method' => 'POST', 'id' => 'test_form']) !!}
@@ -35,40 +36,23 @@
 										{!! Form::hidden("assignement_id", $assignement->id) !!}
 										{!! Form::hidden("quiz_id", $quiz->id) !!}
 										{!! Form::hidden("user_id", $uid) !!}
-										{!! Form::text("points", $answer2->points, ['data-question' => $question->id, 'data-assignement' => $assignement->id]) !!}
+										{!! Form::text("points", $answer->points, ['data-question' => $question->id, 'data-assignement' => $assignement->id]) !!}
 										{!! Form::button(Lang::get('messages.save'), ['class' => 'btn label-success save_points', 'data-question' => $question->id, 'id' => $z]) !!}
 										<span class="label"></span>
 										{!! Form::close() !!}
 						    			</td>
-						    			@endif
-                                 	   @endforeach
-								 
-
-                                  @foreach($question->answers as $answer)
-                                  <tr>
-                                   
-					    			
-                                       @if($answer->id==$corect && $answer->corect==1 || $answer->id==$corect && $answer->corect==0 )
-   								       <td> 
-   								            @if(!empty($question->code))
-												<code><?=$question->code?></code>
-												<hr>
-										    @endif
-   								       	    <span class="label {{($answer->correct)?'label-success':'label-danger'}}">
+					    			@else
+					    			<td>
+										@if(!empty($question->code))
+											<code><?=$question->code?></code>
+											<hr>
+										@endif
+					    				<span class="label {{($answer->related_answer->correct)?'label-success':'label-danger'}}">
 					    					{{Lang::get('messages.answer')}} {{$z}}:&nbsp;&nbsp;
-					    					</span>&nbsp; {{ $answer->answer }}
-					    				</td>	
-					    				@else
-                                 		 <td>
-                                 		    
-                                 	 		<span class="label label-default">
-					    					{{Lang::get('messages.answer')}} {{$z}}:&nbsp;&nbsp;
-					    					</span> &nbsp; {{$answer->answer}}
-                                 		 </td>
-                                 	@endif
-
-                                  </tr>
-                                 
+					    				</span>&nbsp; {{ $answer->related_answer->answer }}
+					    			</td>
+					    			@endif
+					    		</tr>
 					    		<?php $z++; ?>
 					    		@endforeach
 					    		<?php $i++; ?>
