@@ -53,10 +53,6 @@
 					    			
                                        @if($answer->id==$corect && $answer->corect==1 || $answer->id==$corect && $answer->corect==0 )
    								       <td> 
-   								            @if(!empty($question->code))
-												<code><?=$question->code?></code>
-												<hr>
-										    @endif
    								       	    <span class="label {{($answer->correct)?'label-success':'label-danger'}}">
 					    					{{Lang::get('messages.answer')}} {{$z}}:&nbsp;&nbsp;
 					    					</span>&nbsp; {{ $answer->answer }}
