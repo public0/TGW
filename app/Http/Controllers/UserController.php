@@ -107,6 +107,18 @@ class UserController extends Controller {
 					}
 				}
 				break;
+			case 3: /* HR Officer */
+                 foreach ($privileges as $privilege){
+                 	if(in_array($privilege->privilege,['Users']) && $privilege->type !='u' && $privilege->type !='d'){
+                       $privilegesArray[] = $privilege->id;
+                 	} elseif (in_array($privilege->privilege,['Assignments']) &&  $privilege->type !='u'){
+                        $privilegesArray[] = $privilege->id;
+             	    } else {
+						continue;
+             	    }	
+                 	     
+                 }
+				break;
 			case 4: /* Tehnic */
 				foreach ($privileges as $privilege) {
 					if(in_array($privilege->privilege, ['Questions', 'Quizzes', 'Assignments'])) {
@@ -125,6 +137,18 @@ class UserController extends Controller {
 					$privilegesArray[] = $privilege->id;
 				}
 				break;
+			case 8: /* HR TEAM LEADER */
+             foreach ($privileges as $privilege){
+             	if(in_array($privilege->privilege,['Users']) && $privilege->type !='u' && $privilege->type !='d'){
+                   $privilegesArray[] = $privilege->id;
+             	} elseif (in_array($privilege->privilege,['Assignments']) &&  $privilege->type !='u'){
+                    $privilegesArray[] = $privilege->id;
+         	    } else {
+					continue;
+         	    }	
+             	     
+             }
+			break;
 
 		}
 		$newUser->privileges()->attach($privilegesArray);
