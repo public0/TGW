@@ -25,4 +25,11 @@ class Category extends Model {
 		return $this->belongsToMany('App\Job', 'category_job', 'category_id', 'job_id')->withTimestamps();
 	}
 
+	/**
+	* Get Category Technicians
+	*/
+	public function users() {
+		return $this->belongsToMany('App\User', 'category_user', 'category_id', 'user_id')->withTimestamps();
+	}
+
 }

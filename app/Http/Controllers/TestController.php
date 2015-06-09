@@ -10,7 +10,7 @@ use App\Question;
 use App\User_quiz;
 use App\Given_answers;
 use Auth;
-
+use App\User;
 class TestController extends Controller {
 
 	/**
@@ -26,6 +26,10 @@ class TestController extends Controller {
 	/**
 	* Take test
 	*/
+
+
+	
+	
 	public function take() {
 		$assignement = Assignement::where('assigned_user', Auth::user()->id)->where('status', 0)->first();
 
@@ -33,6 +37,8 @@ class TestController extends Controller {
 			return redirect('test/score');
 		}
 		if(!$assignement->job->status) {
+
+		
 			return redirect('test/score');			
 		}
 		$curDate = date('Y-m-d H:i:s');
@@ -40,14 +46,21 @@ class TestController extends Controller {
 		if($curDate > $assignement->job->end_at || $curDate < $assignement->job->start_at) {
 			$assignement->status = 1;
 			$assignement->save();
+           	
 			return redirect('test/score');			
 		}
+
+		
+			
+		
+
 		$user_quizz = User_quiz::where('user_id', Auth::user()->id)->where('done', 0)->where('assignement_id', $assignement->id)->get();
 
 		if(empty($user_quizz->toArray()) && !empty($assignement->toArray())) {
 			$assignement->ended_at = \Carbon\Carbon::now()->toDateTimeString();
 			$assignement->status = 1;
 			$assignement->save();
+		
 			return redirect('test/score');
 		}
 		if($assignement->started_at == '0000-00-00 00:00:00') {
@@ -70,10 +83,41 @@ class TestController extends Controller {
 
 		$job = $assignement->job;
 		$user_quizz = User_quiz::where('user_id', Auth::user()->id)->where('done', 0)->where('assignement_id', $assignement->id)->first();
+		$users=User::orderBy('id', 'ASC')->get();
 		if(!$user_quizz) {
 			$assignement->ended_at = \Carbon\Carbon::now()->toDateTimeString();
 			$assignement->status = 1;
 			$assignement->save();
+      
+
+		foreach ($job->quizzes as $job_quizz) {
+			foreach($job_quizz->category->users as $technicians) {
+				\Mail::send('emails.technicians', compact('technicians'), function($message) use ($technicians)
+					{
+			   			 $message->to($technicians->email)->subject(\Lang::get('messages.assignement'));
+					});
+			}
+		}
+			
+
+			foreach($users as $user){
+	
+				if($user->user_type_id == 3){
+						\Mail::send('emails.hr_officer', compact('user', 'job'), function($message) use ($user, $job)
+					{
+			   			 $message->to($user->email)->subject(\Lang::get('messages.assignement'));
+					});
+
+				} elseif($user->user_type_id == 8){
+						\Mail::send('emails.hr_team_leader', compact('user', 'job'), function($message) use ($user, $job)
+					{
+			  		     $message->to($user->email)->subject(\Lang::get('messages.assignement'));
+					});
+				} else {
+					continue;
+				}
+
+			}
 			return redirect('test/score');			
 		}
 		$quizzes = $assignement->job->quizzes;
@@ -102,6 +146,7 @@ class TestController extends Controller {
 	/**
 	* Test submission
 	*/
+	
 	public function submit(Request $request) {
 		$input = $request->all();
 		$assignement = Assignement::where('assigned_user', Auth::user()->id)->where('status', 0)->first();
@@ -194,7 +239,7 @@ class TestController extends Controller {
 		$user_quizz->mark = $final_mark;
 		$user_quizz->save();
 		\Session::put('submitted', true);
-
+      
 		return redirect('test');
 	}
 	/**
