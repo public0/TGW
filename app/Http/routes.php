@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('categories/edit/{id}', 'CategoryController@edit');
 	Route::post('categories/update/{id}', 'CategoryController@update');
 	Route::delete('categories/delete/{id}', 'CategoryController@destroy');
+	Route::get('categories/delete/{id}', 'CategoryController@destroy');
 
 	Route::get('quizzes', 'QuizController@index');
 	Route::get('quizzes/create', 'QuizController@create');
@@ -90,6 +91,11 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('test/continue', 'TestController@goToTest');
 
 	Route::resource('privileges', 'PrivController');
+
+	Route::get('ajax/get_categories', 'AjaxController@getCategories');
+	Route::get('ajax/get_quizzes', 'AjaxController@getQuizzes');
+	Route::get('ajax/get_users', 'AjaxController@getUsers');
+
 });
 
 Route::controllers([

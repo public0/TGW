@@ -30,7 +30,7 @@ $(function() {
 		}
 	});
 
-	$('#categories_table').dataTable({
+/*	$('#categories_table').dataTable({
 		"aaSorting": [],
 		"iDisplayLength" : 30,
 		"paging":   true,
@@ -42,6 +42,21 @@ $(function() {
 	        "targets": -1
     	}]	
 	});
+*/
+
+	$('#categories_table').dataTable({
+		'ajax': 'ajax/get_categories',
+		'columnDefs' : [
+			{className: 'text-center', "targets": [ 0, 1, 2 ]}
+		],
+		"iDisplayLength" : 25,
+		'columns' : [
+			{'data' : 'name'},
+			{'data' : 'quizzesCount'},
+			{'data' : 'actions'},
+		],
+	});
+
 
 	$('#quiz_questions_table').dataTable({
 		"aaSorting": [],
@@ -96,7 +111,7 @@ $(function() {
     	}]	
 	});
 
-	$('#quizzes_table').dataTable({
+/*	$('#quizzes_table').dataTable({
 		"aaSorting": [],
 		"bLengthChange": false,
 		"iDisplayLength" : 30,
@@ -108,8 +123,24 @@ $(function() {
 	        "targets": [-1,-2]
     	}]	
 	});
+*/
+	$('#quizzes_table').dataTable({
+		'ajax': 'ajax/get_quizzes',
+		'columnDefs' : [
+			{className: 'text-center', "targets": [ 0, 1, 2, 3, 4 ]}
+		],
+		"iDisplayLength" : 25,
+		'columns' : [
+			{'data' : 'categoryName'},
+			{'data' : 'name'},
+			{'data' : 'updated_at'},
+			{'data' : 'privileges'},
+			{'data' : 'actions'}
+		],
+	});
 
-	$('#users_table').dataTable({
+
+/*	$('#users_table').dataTable({
 		"aaSorting": [],
 		"iDisplayLength" : 30,
 		"paging":   false,
@@ -120,6 +151,23 @@ $(function() {
 	        "targets": [-1]
     	}]	
 	});
+*/
+
+	$('#users_table').dataTable({
+		'ajax': 'ajax/get_users',
+		'columnDefs' : [
+			{className: 'text-center', "targets": [ 0, 1, 2, 3, 4 ]}
+		],
+		"iDisplayLength" : 25,
+		'columns' : [
+			{'data' : 'uType'},
+			{'data' : 'fullName'},
+			{'data' : 'login'},
+			{'data' : 'email'},
+			{'data' : 'actions'}
+		],
+	});
+
 	$('#new_intern_quiz').hide();
 	$('#category_id').change(function(){
 		if(this.value == 1) {
