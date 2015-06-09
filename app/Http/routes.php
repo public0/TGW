@@ -95,6 +95,8 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('ajax/get_categories', 'AjaxController@getCategories');
 	Route::get('ajax/get_quizzes', 'AjaxController@getQuizzes');
 	Route::get('ajax/get_users', 'AjaxController@getUsers');
+	Route::get('ajax/get_assignments', 'AjaxController@getAssignments');
+	Route::get('ajax/get_jobs', 'AjaxController@getJobs');
 
 });
 

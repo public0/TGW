@@ -64,15 +64,29 @@ $(function() {
 		"paging":   false,
 		"info":     false,
 	});
-	$('#jobs_table').dataTable({
+/*	$('#jobs_table').dataTable({
 		"aaSorting": [],
 		"iDisplayLength" : 30,
 		"paging":   false,
 		"info":     false,
 		"searching": 	false,
 	});
+*/
 
-	var qat = $('#quiz_assignment_table').dataTable({
+	$('#jobs_table').dataTable({
+			'ajax': 'ajax/get_jobs',
+			'columnDefs' : [
+				{className: 'text-center', "targets": [ 0, 1, 2, 3 ]}
+			],
+			"iDisplayLength" : 25,
+			'columns' : [
+				{'data' : 'title'},
+				{'data' : 'candidates'},
+				{'data' : 'status'},
+				{'data' : 'actions'},
+			],
+	});
+		var qat = $('#quiz_assignment_table').dataTable({
 		"aaSorting": [[0, 'asc'], [5, 'desc']],
 		"iDisplayLength" : 30,
 		"bLengthChange": false,
@@ -85,7 +99,7 @@ $(function() {
     	}]	
 	});
 
-	$('#assignment_table').dataTable({
+/*	$('#assignment_table').dataTable({
 		"aaSorting": [],
 		"iDisplayLength" : 30,
 		"bLengthChange": false,
@@ -97,6 +111,22 @@ $(function() {
 	        "targets": [-1]
     	}]	
 	});
+*/
+	$('#assignment_table').dataTable({
+		'ajax': 'ajax/get_assignments',
+		'columnDefs' : [
+			{className: 'text-center', "targets": [ 0, 1]}
+		],
+//		"processing": true,
+//        "serverSide": true,
+		"iDisplayLength" : 25,
+		'columns' : [
+			{'data' : 'jobTitle'},
+			{'data' : 'period'},
+			{'data' : 'jobQuizzes'},
+		],
+	});
+
 
 	$('#questions_table').dataTable({
 		"aaSorting": [],
