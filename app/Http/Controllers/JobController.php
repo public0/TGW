@@ -19,15 +19,8 @@ class JobController extends Controller {
 	 */
 	public function index(Request $request)
 	{
-		if(!in_array(22, $this->privsArray))
+		if(!in_array(22, $this->privsArray)){
 			return redirect()->back();
-		$search = $request->all();
-		$jobs = NULL;
-
-		if($search && !empty($search['q'])) {
-			$jobs = Job::whereRaw('title LIKE ? OR description LIKE ?', ['%'.$search['q'].'%','%'.$search['q'].'%'])->paginate(10);
-		} else {
-			$jobs = Job::paginate(30);
 		}
 		return view('jobs.show_jobs', compact('jobs'));		
 	}
@@ -108,7 +101,7 @@ class JobController extends Controller {
 		        'title' => 'required|max:255',
 		        'candidates' => 'integer',
 		        'quizzes' => 'required',
-//		        'job_officer' => 'required'
+		        'job_officer' => 'required'
 		]);
 		$input = $request->all();
 		$job = Job::find($id);

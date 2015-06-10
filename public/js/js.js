@@ -86,7 +86,8 @@ $(function() {
 				{'data' : 'actions'},
 			],
 	});
-		var qat = $('#quiz_assignment_table').dataTable({
+
+/*	$('#quiz_assignment_table').dataTable({
 		"aaSorting": [[0, 'asc'], [5, 'desc']],
 		"iDisplayLength" : 30,
 		"bLengthChange": false,
@@ -96,8 +97,28 @@ $(function() {
 		"columnDefs": [{
 	        "orderable": false,
 	        "targets": [-1,-2]
-    	}]	
+		}]	
 	});
+*/
+
+	$('#quiz_assignment_table').dataTable({
+			'ajax': base_url+'/ajax/get_assigned_quizzes/'+pathArray[pathArray.length - 1],
+			'columnDefs' : [
+				{className: 'text-center', "targets": [ 0, 1, 2, 3 ]}
+			],
+			"iDisplayLength" : 25,
+			'columns' : [
+				{'data' : 'jobTitle'},
+				{'data' : 'QuizTitle'},
+				{'data' : 'userName'},
+				{'data' : 'started_at'},
+				{'data' : 'goal'},
+				{'data' : 'score'},
+				{'data' : 'quizShow'},
+				{'data' : 'actions'},
+			],
+	});
+
 
 /*	$('#assignment_table').dataTable({
 		"aaSorting": [],

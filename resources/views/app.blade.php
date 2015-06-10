@@ -157,6 +157,7 @@
 	<script src="{{ asset('/js/image-modal.js') }}"></script>
 	<script type="text/javascript">
 	var base_url = '{{ URL::to('/') }}';
+	var pathArray = window.location.pathname.split('/');
 	</script>
 	<script src="{{ asset('/js/js.js') }}"></script>
 </body>

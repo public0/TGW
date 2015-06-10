@@ -19,11 +19,9 @@ class CategoryController extends Controller {
 	 */
 	public function index()
 	{
-		if(!in_array(2, $this->privsArray))
+		if(!in_array(2, $this->privsArray)){
 			return redirect()->back();
-/*		$categories = Category::paginate(10);*/
-		$categories = Category::get();
-
+		}
 		return view('categories.categories', compact('categories'));
 	}
 

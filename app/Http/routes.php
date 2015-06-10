@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('quizzes/create', 'QuizController@create');
 	Route::get('quizz/edit/{id}', 'QuizController@edit');
 	Route::post('quizz/update/{id}', 'QuizController@update');
+	Route::get('quizz/delete/{id}', 'QuizController@destroy');
 	Route::delete('quizz/delete/{id}', 'QuizController@destroy');
 	Route::put('quizz/store', 'QuizController@store');
 
@@ -45,6 +46,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::put('user/store', 'UserController@store');
 	Route::get('user/edit/{id}', 'UserController@edit');
 	Route::post('user/update/{id}', 'UserController@update');
+	Route::get('user/delete/{id}', 'UserController@destroy');
 	Route::delete('user/delete/{id}', 'UserController@destroy');
 
 	Route::get('jobs_assignements', 'AssignementController@jobs_assignements');
@@ -53,6 +55,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('quiz_assignments', 'AssignementController@quiz_assignements');
 	Route::get('assignements', 'AssignementController@index');
 	Route::get('new_assignement', 'AssignementController@create');
+	Route::get('assignment/delete/{aid}/{qid}', 'AssignementController@destroy');
 	Route::delete('assignment/delete/{aid}/{qid}', 'AssignementController@destroy');
 
 
@@ -62,6 +65,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::put('question/store/{id}', 'QuestionController@quiz_store');
 	Route::put('question/store', 'QuestionController@store');
 	Route::delete('question/delete/{id}', 'QuestionController@destroy');
+	Route::get('question/delete/{id}', 'QuestionController@destroy');
 	Route::get('question/edit/{id}', 'QuestionController@edit');
 	Route::post('question/update/{id}', 'QuestionController@update');
 	Route::get('questions/{id}', 'QuizController@quizz_questions');
@@ -72,6 +76,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::put('job/store','JobController@store');
 	Route::get('job/edit/{id}','JobController@edit');
 	Route::post('job/update/{id}','JobController@update');
+	Route::get('job/delete/{id}','JobController@destroy');
 	Route::delete('job/delete/{id}','JobController@destroy');
 
 	Route::get('assignements','AssignementController@index');
@@ -79,6 +84,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::put('assignement/store','AssignementController@store');
 	Route::get('assignement/edit/{id}','AssignementController@edit');
 	Route::post('assignement/update/{id}','AssignementController@update');
+	Route::get('assignement/delete/{id}','AssignementController@destroy');
 	Route::delete('assignement/delete/{id}','AssignementController@destroy');
 
 	Route::get('test/','TestController@take');
@@ -96,6 +102,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('ajax/get_quizzes', 'AjaxController@getQuizzes');
 	Route::get('ajax/get_users', 'AjaxController@getUsers');
 	Route::get('ajax/get_assignments', 'AjaxController@getAssignments');
+	Route::get('ajax/get_assigned_quizzes/{id}', 'AjaxController@getAssignedQuizzes');
 	Route::get('ajax/get_jobs', 'AjaxController@getJobs');
 
 });

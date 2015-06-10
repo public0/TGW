@@ -55,125 +55,18 @@ class AssignementController extends Controller {
 		return view('assignement.show_assignements', compact('assignements','score', 'search'));
 	}
 
-	/**
-	*
-	*/
-
 	public function jobs_assignements(Request $request) {
-		if(!in_array(14, $this->privsArray))
+		if(!in_array(14, $this->privsArray)) {			
 			return redirect()->back();
-		$search = $request->all();
-		$assignements = NULL;
-		$score = [];
-		$user = Auth::user();
-		$userCategories = $user->categories;
-		$uCat = [];
-		foreach ($userCategories as $userCategory) {
-			$uCat[] = $userCategory->id;
 		}
-
-		if($search && !empty($search['q'])) {
-			if(!empty($search['s']) && (int)$search['s'] == 1) {
-				$assignements = Assignement::with(['job' => function($query) use ($search) {
-					$query->whereRaw('jobs.title LIKE ?', ['%'.$search['q'].'%']);
-				}, 'user' => function($query) use ($search){
-
-				}])->orderBy('id', 'DESC')->groupBy('assigned_job')->get();
-			} else {
-				$assignements = Assignement::with(['job' => function($query) use ($search) {
-					//$query->orWhereRaw('title LIKE ?', ['%'.$search['q'].'%']);
-				}, 'user' => function($query) use ($search){
-					$query->whereRaw('email LIKE ?', ['%'.$search['q'].'%']);				
-					$query->orWhereRaw('login LIKE ?', ['%'.$search['q'].'%']);				
-					#$query->orWhereRaw('name LIKE ?', ['%'.$search['q'].'%']);
-					#$query->orWhereRaw('surname LIKE ?', ['%'.$search['q'].'%']);
-				}])->orderBy('id', 'DESC')->get();
-
-			}
-		} else {
-/*			$assignements = Assignement::orderBy('id', 'DESC')->paginate(30);*/
-			$assignements = Assignement::with(['job' => function($query) {
-//				$query->groupBy('id', 'start_at', 'end_at');
-			}])->orderBy('id', 'DESC')->groupBy('assigned_job')->get();
-		}
-/*		$internAssignments = Assignement::with(['job' => function($query) {
-
-		}])->where('assigned_job', 1)->get();
-*/
-		//dd($internAssignments);
-		$score = [];
-		foreach ($assignements as $assignement) {
-			foreach ($assignement->quizzes as $quiz) {
-				$score[$quiz->id] = 0;
-				foreach($quiz->quiz->questions as $question) {
-					$score[$quiz->id] += $question->points;
-				}
-			}
-		}
-
-		if(!empty($search['s']) && (int)$search['s'] == 1) {
 			return view('assignement.jobs_assignements', compact('assignements','score', 'search', 'user', 'uCat'));
-		} elseif(!empty($search['s']) && (int)$search['s'] == 2) {
-			return view('assignement.quiz_assignements', compact('assignements','score', 'search', 'user', 'uCat'));
-		} else {
-			return view('assignement.jobs_assignements', compact('assignements','score', 'search', 'user', 'uCat'));
-		}
 	}
 
 	public function quiz_assignements($aid, $qid, Request $request) {
-		if(!in_array(14, $this->privsArray))
+		if(!in_array(14, $this->privsArray)) {			
 			return redirect()->back();
-		$search = $request->all();
-		$assignements = NULL;
-		$score = [];
-		$user = Auth::user();
-		$userCategories = $user->categories;
-		$uCat = [];
-		foreach ($userCategories as $userCategory) {
-			$uCat[] = $userCategory->id;
 		}
-		
-		if($search && !empty($search['q'])) {
-			if(!empty($search['s']) && (int)$search['s'] == 1) {
-
-			$assignements = Assignement::with(['job' => function($query) use ($search) {
-				$query->whereRaw('title LIKE ?', ['%'.$search['q'].'%']);
-			}, 'user' => function($query) use ($search){
-			}])->orderBy('id', 'DESC')->groupBy('assigned_job')->get();
-
-			} else {
-				$assignements = Assignement::with(['job' => function($query) use ($search) {
-					//$query->orWhereRaw('title LIKE ?', ['%'.$search['q'].'%']);
-				}, 'user' => function($query) use ($search){
-					$query->whereRaw('email LIKE ?', ['%'.$search['q'].'%']);				
-					$query->orWhereRaw('login LIKE ?', ['%'.$search['q'].'%']);				
-				}])->orderBy('id', 'DESC')->get();
-
-			}
-		} else {
-/*			$assignements = Assignement::orderBy('id', 'DESC')->paginate(30);*/
-			$assignements = Assignement::with(['quizzes' => function($query) use ($aid, $qid){
-				$query->whereIn('quiz_id', [$qid]);
-
-			}])->orderBy('id', 'DESC')->get();
-		}
-		$score = [];
-		foreach ($assignements as $assignement) {
-			foreach ($assignement->quizzes as $quiz) {
-				$score[$quiz->id] = 0;
-				foreach($quiz->quiz->questions as $question) {
-					$score[$quiz->id] += $question->points;
-				}
-			}
-		}
-		if(!empty($search['s']) && (int)$search['s'] == 1) {
-			return view('assignement.jobs_assignements', compact('assignements','score', 'search', 'user', 'uCat'));
-		} elseif(!empty($search['s']) && (int)$search['s'] == 2) {
-			return view('assignement.quiz_assignements', compact('assignements','score', 'search', 'user', 'uCat'));
-		} else {
-			return view('assignement.quiz_assignements', compact('assignements','score', 'search', 'user', 'uCat'));
-		}
-
+		return view('assignement.quiz_assignements', compact('assignements','score', 'search', 'user', 'uCat'));
 	}
 
 	/**

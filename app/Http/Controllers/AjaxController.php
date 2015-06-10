@@ -39,19 +39,77 @@ class AjaxController extends Controller {
 	public function getQuizzes() {
 		$data = new \stdClass;
 		$data->data = Quiz::all();
-		foreach($data->data as $row) {
-			$row->categoryName = $row->category['name'];
-			if(in_array(18, $this->privsArray)) {
-			$row->privileges = '
-				<form method="GET" action="'.\URL::to('/').'/questions/'.$row->id.'" accept-charset="UTF-8">
-					<input class="btn-sm label-info" type="submit" value="Edit">
-				</form>
-			';
-			} else {
-				$row->privileges = '';
-			}
-			$row->actions = view('ajax/quizzes_view', compact('row'))->render();
+		$user = Auth::user();
+		$uCat = [];
+		$userCategories = $user->categories;
+		foreach ($userCategories as $userCategory) {
+			$uCat[] = $userCategory->id;
 		}
+    	if($user->user_type_id == 4) {
+			foreach($data->data as $key => $row) {
+				$quizJobs = FALSE;
+
+				foreach($row->jobs as $qj) {
+					if (!empty($qj->assigned->toArray())) {
+						$quizJobs = TRUE;
+					}					
+				}
+
+				if(in_array($row->category['id'], $uCat)) {
+					$row->categoryName = $row->category['name'];
+					if(in_array(18, $this->privsArray)) {
+			    		if( !$quizJobs ) {
+							$row->privileges = '
+								<form method="GET" action="'.\URL::to('/').'/questions/'.$row->id.'" accept-charset="UTF-8">
+									<input class="btn-sm label-info" type="submit" value="'. \Lang::get("messages.edit").'">
+								</form>
+							';
+			    		} else {
+							$row->privileges = '
+								<form method="GET" action="'.\URL::to('/').'/questions/show_questions/'.$row->id.'" accept-charset="UTF-8">
+									<input class="btn-sm label-info" type="submit" value="'. \Lang::get("messages.view").'">
+								</form>
+							';
+			    		}
+					} else {
+						$row->privileges = '';
+					}
+					$row->actions = view('ajax/quizzes_view', compact('row', 'quizJobs'))->render();
+				} else {
+					unset($data->data[$key]);
+				}
+			}
+    	} else {
+			foreach($data->data as $key => $row) {
+				$quizJobs = FALSE;
+
+				foreach($row->jobs as $qj) {
+					if (!empty($qj->assigned->toArray())) {
+						$quizJobs = TRUE;
+					}					
+				}
+				$row->categoryName = $row->category['name'];
+				if(in_array(18, $this->privsArray)) {
+		    		if( !$quizJobs ) {
+						$row->privileges = '
+							<form method="GET" action="'.\URL::to('/').'/questions/'.$row->id.'" accept-charset="UTF-8">
+								<input class="btn-sm label-info" type="submit" value="'. \Lang::get("messages.edit").'">
+							</form>
+						';
+		    		} else {
+						$row->privileges = '
+							<form method="GET" action="'.\URL::to('/').'/questions/show_questions/'.$row->id.'" accept-charset="UTF-8">
+								<input class="btn-sm label-info" type="submit" value="'. \Lang::get("messages.view").'">
+							</form>
+						';
+		    		}
+				} else {
+					$row->privileges = '';
+				}
+				$row->actions = view('ajax/quizzes_view', compact('row', 'quizJobs'))->render();
+			}
+    	}
+		$data->data = $data->data->values();
 		return response()->json($data);
 	}
 	/**
@@ -105,7 +163,7 @@ class AjaxController extends Controller {
 	    	}
 			if(in_array($user->user_type_id, [3, 8])) {
 				if($row->job->officers) {
-					foreach($assignement->job->officers as $officer) {
+					foreach($row->job->officers as $officer) {
 						$officersArr[] = $officer->id; 
 					}
 					if(in_array($user->id,$officersArr)) {
@@ -128,6 +186,82 @@ class AjaxController extends Controller {
 		$data->data = $data->data->values();
 
 		return response()->json($data);
+	}
+	/**
+	* Display Quiz Assignments
+	*/
+
+	public function getAssignedQuizzes($qid) {
+		$data = new \stdClass;
+		$user = Auth::user();
+		$userCategories = $user->categories;
+		$uCat = [];
+		foreach ($userCategories as $userCategory) {
+			$uCat[] = $userCategory->id;
+		}
+		$data->data = Assignement::with(['quizzes' => function($query) use ($qid){
+			$query->whereIn('quiz_id', [$qid]);
+
+		}])->orderBy('id', 'DESC')->get();
+		$score = [];
+		$i = 1;
+		$job = [];
+		foreach($data->data as $key => $row) {
+			if(isset($row->user->name)) {
+				if(isset($row->quizzes) && !$row->quizzes->isEmpty()) {
+					foreach ($row->quizzes as $quiz) {
+						$score[$quiz->id] = 0;
+						foreach($quiz->quiz->questions as $question) {
+							$score[$quiz->id] += $question->points;
+						}
+
+					    if(array_key_exists($row->job->id, $job)) {
+					    	$i = $job[$row->job->id];
+					    	$job[$row->job->id] = $job[$row->job->id]+1;
+					    } else {
+					    	$i = 1;
+				    		$job += [$row->job->id => $i];
+					    }
+
+					    /*Populate Here*/
+					    $row->jobTitle  = $row->job->title.'('.$row->job->candidates.')';
+					    $row->QuizTitle = $quiz->quiz->name;
+				    	if(!empty($row->user->name)) {
+						    $row->userName  = $row->user->name.' '.$row->user->surname;
+				    	} else {
+				    		$row->userName = $row->user->login;
+				    	}
+			    		if(isset($row->started_at)) {
+			    			$row->started_at = ($row->started_at != '0000-00-00 00:00:00')?$row->started_at:\Lang::get('messages.not_started');
+			    		}
+
+						$row->goal = view('ajax/quiz_assignment_pass_score', compact('row', 'quiz', 'user', 'uCat'))->render();
+						if($score[$quiz->id]) {
+							$row->score = (!$quiz->done)?'0%': round(($quiz->mark / $score[$quiz->id]) * 100, 1).'%';
+						}
+
+						$row->quizShow = '<a href="'.url('results/'.$quiz->user_id.'/'.$row->id.'/'.$quiz->quiz_id).'">'.\Lang::get($quiz->quiz->name).'</a><br>';
+
+
+						if(in_array(16, $this->privsArray)) {
+							$row->actions = view('ajax/quiz_assignment_action', compact('row', 'quiz', 'user', 'uCat'))->render();;
+						} else {							
+							$row->actions = '';
+						}
+
+					    $i++;
+					}
+				} else {
+					/* Assignment to a job with on quizzes*/
+					/* Empty and reindex array*/
+					unset($data->data[$key]);
+				}
+			}
+		}
+		$data->data = $data->data->values();
+
+		return response()->json($data);
+
 	}
 
 	/**

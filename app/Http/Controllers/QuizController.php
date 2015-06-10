@@ -18,23 +18,8 @@ class QuizController extends Controller {
 	 */
 	public function index(Request $request)
 	{
-		if(!in_array(6, $this->privsArray))
+		if(!in_array(6, $this->privsArray)) {
 			return redirect()->back();
-		$search = $request->all();
-		$quizzes = NULL;
-		$user = Auth::user(); 
-
-		$userCategories = $user->categories;
-		$uCat = [];
-		foreach ($userCategories as $userCategory) {
-			$uCat[] = $userCategory->id;
-		}
-
-		if($search && !empty($search['q'])) {
-			$quizzes = Quiz::whereRaw('name LIKE ? OR description LIKE ?', ['%'.$search['q'].'%','%'.$search['q'].'%'])->paginate(10);
-		} else {
-/*			$quizzes = Quiz::paginate(10);*/
-			$quizzes = Quiz::get();
 		}
 		return view('quizzes.show_quizzes', compact('quizzes', 'user', 'uCat'));
 	}

@@ -23,14 +23,8 @@ class UserController extends Controller {
 	 */
 	public function index(Request $request)
 	{
-		if(!in_array(10, $this->privsArray))
+		if(!in_array(10, $this->privsArray)) {			
 			return redirect()->back();
-		$search = $request->all();
-		$users = NULL;
-		if($search && !empty($search['q'])) {
-			$users = User::whereRaw('name LIKE ? OR surname LIKE ? OR login LIKE ? OR email LIKE ?', ['%'.$search['q'].'%','%'.$search['q'].'%','%'.$search['q'].'%','%'.$search['q'].'%'])->paginate(10);
-		} else {
-			$users = User::paginate(30);
 		}
 		return view('user.show_users', compact('users'));
 	}
