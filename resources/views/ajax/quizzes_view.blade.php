@@ -9,7 +9,7 @@
 	@if( !$quizJobs)
 		@if(in_array(8, $privsArray))
 		<li>
-			<form method="GET" action="{{\URL::to('/')}}/quizz/delete/{{$row->id}}" accept-charset="UTF-8">
+			<form method="GET" action="{{\URL::to('/')}}/quizz/delete/{{$row->id}}" accept-charset="UTF-8" class="confirm">
 				<input class="btn-sm label-danger" type="submit" value="Delete">
 			</form>
 		</li>

@@ -21,16 +21,25 @@ class AjaxController extends Controller {
 	 * @return Response
 	 */
 	public function getCategories() {
-		$data = new \stdClass;
-		$data->data = Category::all();
-		foreach($data->data as $row) {
-			$row->name = $row->name;
-			$row->quizzesCount =  $row->quizzes->count();
-			$row->actions = view('ajax/categories_view', compact('row'))->render();;
-		}
-		return response()->json($data);
-	}
+	    $data = new \stdClass;
+	    $user = Auth::user();
+	    $userCategories = $user->categories;
+	    foreach ($userCategories as $userCategory) {
+	            $uCat[] = $userCategory->id;
+	    }
+	    if($user->user_type_id == 4){
+	            $data->data = Category::whereIn('id', $uCat)->get();
+	    }else{
+	            $data->data = Category::all();
+	    } 
 
+	    foreach($data->data as $row) {
+	            $row->name = $row->name;
+	            $row->quizzesCount =  $row->quizzes->count();
+	            $row->actions = view('ajax/categories_view', compact('row'))->render();;
+	    }
+	    return response()->json($data);
+    }
 	/**
 	 * Display Quizzes Listing
 	 *
