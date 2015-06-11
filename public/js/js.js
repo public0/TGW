@@ -12,15 +12,14 @@ $(function() {
 	    // Do Focus Actions Here
 	});
 
-	$('.confirm').submit(function() {
+	$('table').on('submit', '.confirm', function() {
 		var r = confirm("Are you sure ?");
 		if (r == true) {
 		    return true;
 		} else {
 		    return false;
 		}
-
-	})
+	});
 
 	$('#user_type_id').change(function(){
 		if(this.value == 4) {
