@@ -7,7 +7,7 @@
 	</li>
 	@endif
 
-	@if($row->id != 1)
+	@if($row->id != 1 && $row->quizzes->count() == 0)
 		@if(in_array(4, $privsArray))
 		<li>
 			<form method="GET" action="{{\URL::to('/')}}/categories/delete/{{$row->id}}" accept-charset="UTF-8" class="confirm">
