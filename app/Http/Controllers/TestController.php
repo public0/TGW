@@ -89,7 +89,7 @@ class TestController extends Controller {
 			$assignement->status = 1;
 			$assignement->save();
       
-
+		/*TO DO: Send email only if quiz has questions with free text*/
 		foreach ($job->quizzes as $job_quizz) {
 			foreach($job_quizz->category->users as $technicians) {
 				\Mail::send('emails.technicians', compact('technicians'), function($message) use ($technicians)
