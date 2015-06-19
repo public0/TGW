@@ -56,6 +56,7 @@
 	<script src="{{ asset('/js/image-modal.js') }}"></script>
 	<script type="text/javascript">
 	var base_url = '{{ URL::to('/') }}';
+	var pathArray = window.location.pathname.split('/');
 	$(function() {
 		$(window).blur(function(e) {
 			//alert('You may not leave');

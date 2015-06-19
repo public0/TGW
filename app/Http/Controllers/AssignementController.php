@@ -97,7 +97,7 @@ class AssignementController extends Controller {
 	        'assigned_job' => 'required|exists:jobs,id',
 		]);
 		if((int)$input['assigned_job'] == 1) {
-			$job = Job::find($input['assigned_job']);
+/*			$job = Job::find($input['assigned_job']);
 			$setQuiz = $job->quizzes->first()->toArray();
 
 			$users = User::where('user_type_id', 5)->get();
@@ -109,6 +109,7 @@ class AssignementController extends Controller {
 				$newAssignement = Assignement::create($assignementData);
 				$user->assigned = 1;
 				$user->save();
+*/
 				/**
 				* userQuiz do determine what quizzes were done for respective assignement
 				*/
@@ -116,7 +117,8 @@ class AssignementController extends Controller {
 				{
 				    $message->to($user->email)->subject(\Lang::get('messages.assignement'));
 				});
-*/				$quizzes = $job->quizzes->toArray();
+*/
+/*				$quizzes = $job->quizzes->toArray();
 				foreach ($quizzes as $quiz) {
 					$userQuizData = [
 						'user_id' => $user->id,
@@ -128,6 +130,7 @@ class AssignementController extends Controller {
 					$userQuiz = User_quiz::create($userQuizData);
 				}
 			}
+*/
 		} else {
 			$this->validate($request, [
 			        'assigned_users' => 'required'

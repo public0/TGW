@@ -118,8 +118,8 @@ class LoginController extends Controller {
             foreach ($quizzes as $quiz) {
                 if(($quiz['from'] < \Carbon\Carbon::now()->toDateTimeString()) && $quiz['to'] > \Carbon\Carbon::now()->toDateTimeString()) {
                     $user_quiz = User_quiz::where('user_id', $user->id)
-                    ->where('quiz_id', $quiz['id'])
-                    ->where('done', 1)->first();
+                    ->where('quiz_id', $quiz['id'])->first();
+//                    ->where('done', 1)->first();
                     if(!$user_quiz) {
                         $toTest = TRUE;
                     }

@@ -2,6 +2,7 @@
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
 
 class Handler extends ExceptionHandler {
 
@@ -36,7 +37,11 @@ class Handler extends ExceptionHandler {
 	 */
 	public function render($request, Exception $e)
 	{
-		return parent::render($request, $e);
-	}
+		if ($e instanceof TokenMismatchException){
+            //redirect to form an example of how i handle mine
+			return redirect()->back()->withErrors(\Lang::get("messages.token_exception"));      
+        }
+    	return parent::render($request, $e);
+ 	}
 
 }

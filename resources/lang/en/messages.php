@@ -88,5 +88,6 @@ return [
     'mid_score' => 'Mid Score',
     'senior_score' => 'Senior Score',
     'officers' => 'Officers',
-    'view' => 'View'
+    'view' => 'View',
+    'token_exception' => 'Sorry, your session expired. Please try again.'
 ];
