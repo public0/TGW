@@ -240,13 +240,19 @@ class AjaxController extends Controller {
 				    	} else {
 				    		$row->userName = $row->user->login;
 				    	}
-			    		if(isset($row->started_at)) {
-			    			$row->started_at = ($row->started_at != '0000-00-00 00:00:00')?$row->started_at:\Lang::get('messages.not_started');
-			    		}
+
+
+						if(isset($row->started_at)) {
+                            $date = date("d-m-Y", strtotime($row->started_at));
+                            $time = date("h:m:s", strtotime($row->started_at));
+                            $row->started_at = ($row->started_at != '0000-00-00 00:00:00')?$date.'<br>'.$time:\Lang::get('messages.not_started');
+						}
 
 						$row->goal = view('ajax/quiz_assignment_pass_score', compact('row', 'quiz', 'user', 'uCat'))->render();
 						if($score[$quiz->id]) {
 							$row->score = (!$quiz->done)?'0%': round(($quiz->mark / $score[$quiz->id]) * 100, 1).'%';
+						} else {
+							$row->score = '0%';
 						}
 
 						$row->quizShow = '<a href="'.url('results/'.$quiz->user_id.'/'.$row->id.'/'.$quiz->quiz_id).'">'.\Lang::get($quiz->quiz->name).'</a><br>';

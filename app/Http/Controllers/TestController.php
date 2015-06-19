@@ -97,29 +97,34 @@ class TestController extends Controller {
 			   			 $message->to($technicians->email)->subject(\Lang::get('messages.assignement'));
 					});
 			}
+		}			
+
+		$officers = [];
+		foreach($job->officers as $officer){
+			$officers[] = $officer->id;
 		}
-			
 
-			foreach($users as $user){
-	
-				if($user->user_type_id == 3){
-						\Mail::send('emails.hr_officer', compact('user', 'job'), function($message) use ($user, $job)
-					{
-			   			 $message->to($user->email)->subject(\Lang::get('messages.assignement'));
-					});
+		foreach($users as $user){
+           
+			if($user->user_type_id == 3 && in_array($user->id, $officers)){
+					\Mail::send('emails.hr_officer', compact('user', 'job'), function($message) use ($user, $job)
+				{
+		   			 $message->to($user->email)->subject(\Lang::get('messages.assignement'));
+				});
 
-				} elseif($user->user_type_id == 8){
-						\Mail::send('emails.hr_team_leader', compact('user', 'job'), function($message) use ($user, $job)
-					{
-			  		     $message->to($user->email)->subject(\Lang::get('messages.assignement'));
-					});
-				} else {
-					continue;
-				}
-
+			} elseif($user->user_type_id == 8 && in_array($user->id, $officers)){
+					\Mail::send('emails.hr_team_leader', compact('user', 'job'), function($message) use ($user, $job)
+				{
+		  		     $message->to($user->email)->subject(\Lang::get('messages.assignement'));
+				});
+			} else {
+				continue;
 			}
+
+		}
 			return redirect('test/score');			
 		}
+
 		$quizzes = $assignement->job->quizzes;
 		$currentQuiz = $user_quizz->quiz;
 		return view('test.take', compact('assignement', 'job', 'quizzes', 'assignement_id', 'currentQuiz'));
