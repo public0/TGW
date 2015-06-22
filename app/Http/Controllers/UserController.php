@@ -42,16 +42,16 @@ class UserController extends Controller {
 
 		switch (Auth::user()->user_type_id) {
 			case 1:
-					$types += User_Type::orderBy('type', 'DESC')->lists('type','id');
+					$types += User_Type::orderBy('type', 'DESC')->where('id', '!=', 5)->lists('type','id');
 				break;
 			case 2:
-					$types += User_Type::where('id', 8)->orderBy('type', 'DESC')->lists('type','id');
+					$types += User_Type::where('id', 8)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
 				break;
 			case 3:
-					$types += User_Type::where('id', 6)->orderBy('type', 'DESC')->lists('type','id');
+					$types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
 				break;
 			case 8:
-					$types += User_Type::whereIn('id', [3, 6])->orderBy('type', 'DESC')->lists('type','id');
+					$types += User_Type::whereIn('id', [3, 6])->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
 				break;
 			
 			default:

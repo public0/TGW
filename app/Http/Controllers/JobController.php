@@ -54,7 +54,7 @@ class JobController extends Controller {
 		        'title' => 'required|max:255',
 		        'candidates' => 'integer',
 		        'quizzes' => 'required',
-		        'job_officer' => 'required'
+//		        'job_officer' => 'required'
 		]);
 		$input = $request->all();
 		$newJob = Job::create($input);
@@ -110,9 +110,10 @@ class JobController extends Controller {
 		        'title' => 'required|max:255',
 		        'candidates' => 'integer',
 		        'quizzes' => 'required',
-		        'job_officer' => 'required'
+//		        'job_officer' => 'required'
 		]);
 		$input = $request->all();
+
 		$job = Job::find($id);
 		$job->title = $input['title'];
 		$job->description = $input['description'];
@@ -128,7 +129,9 @@ class JobController extends Controller {
 			}
 		}
 		$job->officers()->detach();
-		$job->officers()->attach($input['job_officer']);
+		if(!empty($input['job_officer'])) {
+			$job->officers()->attach($input['job_officer']);			
+		}
 		return redirect()->back();
 
 	}
