@@ -85,9 +85,12 @@ class LoginController extends Controller {
 */
                     }
                 } else {
+                    $name = explode('.', $input['login']);
                     $userData = [
                         'user_type_id' => 5,
                         'login' => $input['login'],
+                        'name' => isset($name[0])?ucfirst($name[0]):'',
+                        'surname' => isset($name[1])?ucfirst($name[1]):'',
                         'email' => isset($ad_emails[0])?$ad_emails[0]:$input['login'].'@vauban.ro',
                         'password' => Hash::make($input['password'])
                     ];
