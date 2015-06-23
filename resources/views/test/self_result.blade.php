@@ -14,6 +14,7 @@
 							<th class="text-center">{{ Lang::get('messages.job') }}</th>
 							<th class="text-center">{{ Lang::get('messages.quiz') }}</th>
 							<th class="text-center">{{ Lang::get('messages.points') }}</th>
+							<th class="text-center">{{ Lang::get('messages.actions') }}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -30,6 +31,11 @@
 									@if($score[$quiz->id])
 									{{ round(($quiz->mark / $score[$quiz->id]) * 100, 1) }}%<br>
 									@endif
+								@endforeach
+							</td>
+							<td class="text-center">
+								@foreach($assignement->quizzes as $quiz )
+									<a href="{{URL('self_results/'.$user->id.'/'.$assignement->id.'/'.$quiz->quiz->id)}}">{{Lang::get('messages.view')}}</a><br>
 								@endforeach
 							</td>
 						</tr>

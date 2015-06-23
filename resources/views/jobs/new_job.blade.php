@@ -37,6 +37,14 @@
 					{!! Form::label('title', Lang::get('messages.title')) !!}
 					{!! Form::text('title', null, ['class' => 'form-control']) !!}
 				</div>
+					
+					<div class="form-group">
+					<?php echo $errors->first('notified','<div class="alert alert-danger" role="alert">
+  					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  					<span class="sr-only">Error:</span>:message</div>'); ?>					
+					{!! Form::label('notified', Lang::get('messages.emails')) !!}
+					{!! Form::text('notified', null, ['class' => 'form-control', 'placeholder' => 'example@vauvan.ro;example2@vauvan.ro']) !!}
+				</div>
 				<div class="form-group">
 					<?php echo $errors->first('quizzes','<div class="alert alert-danger" role="alert">
   					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>

@@ -17,6 +17,7 @@ class CreateJobsTable extends Migration {
 			$table->increments('id');
 			$table->string('title');
 			$table->integer('candidates')->unsigned();
+			$table->text('notified');
 			$table->text('description');
 			$table->boolean('status');
 			$table->timestamp('start_at');

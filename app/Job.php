@@ -9,6 +9,7 @@ class Job extends Model {
 		'candidates',
 		'description',
 		'status',
+		'notified',
 		'start_at',
 		'end_at'
 	];

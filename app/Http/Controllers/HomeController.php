@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\User;
-
+use Auth;
 class HomeController extends Controller {
 
 	/*
@@ -31,7 +31,12 @@ class HomeController extends Controller {
 	 * @return Response
 	 */
 	public function index()
-	{
-		return view('home');
+	{   
+		if(Auth::user()->user_type_id == 5 || Auth::user()->user_type_id == 6){
+			 return redirect('test');
+		}else {
+			return view('home');
+		}
+		
 	}
 }

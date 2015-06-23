@@ -89,5 +89,8 @@ return [
     'senior_score' => 'Senior Score',
     'officers' => 'Officers',
     'view' => 'View',
-    'token_exception' => 'Sorry, your session expired. Please try again.'
+    'token_exception' => 'Sorry, your session expired. Please try again.',
+    'emails' => 'Emails',
+    'tests' => 'Finished test.',
+    'email_error' => 'Enter valid emails.'
 ];

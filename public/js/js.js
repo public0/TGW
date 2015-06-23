@@ -29,6 +29,15 @@ $(function() {
 		}
 	});
 
+	$('#form-control').change(function(){
+		if(this.value == 1) {
+			$('#userr').hide();
+		} else {
+			$('#userr').show();
+		}
+	});
+
+
 /*	$('#categories_table').dataTable({
 		"aaSorting": [],
 		"iDisplayLength" : 30,
@@ -312,8 +321,16 @@ $(function() {
 			var brands = $('#assigned_job option:selected');
 	        var selected = [];
 	        $(brands).each(function(index, brand){
+				if($(this).val() == 1) {				
+					$('#userr').hide();
+					au.multiselect('refresh');
+					au.val('').trigger('liszt:updated');
+				} else {
+					$('#userr').show();
+				}
 	            selected.push([$(this).val()]);
 	        });
+
 	 	}
 	 });
 
@@ -325,7 +342,7 @@ $(function() {
 	 	buttonWidth: '100%',
 	 });
 
-	 $('#assigned_users').multiselect({
+	 var au = $('#assigned_users').multiselect({
 	 	maxHeight: 200,
 	 	checkboxName: 'assigned_users[]',
 	 	includeSelectAllOption: true,

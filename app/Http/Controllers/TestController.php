@@ -98,6 +98,16 @@ class TestController extends Controller {
 					});
 			}
 		}			
+        	
+        $emails=explode(';', $job->notified);
+        foreach($emails as $notify){
+
+        	$user=Auth::user();
+        	 \Mail::send('emails.notifiers', compact('user', 'job'), function($message) use ($user, $job, $notify)
+				{
+		   			 $message->to($notify)->subject(\Lang::get('messages.tests'));
+				});
+        }
 
 		$officers = [];
 		foreach($job->officers as $officer){
@@ -109,13 +119,13 @@ class TestController extends Controller {
 			if($user->user_type_id == 3 && in_array($user->id, $officers)){
 					\Mail::send('emails.hr_officer', compact('user', 'job'), function($message) use ($user, $job)
 				{
-		   			 $message->to($user->email)->subject(\Lang::get('messages.assignement'));
+		   			 $message->to($user->email)->subject(\Lang::get('messages.tests'));
 				});
 
 			} elseif($user->user_type_id == 8 && in_array($user->id, $officers)){
 					\Mail::send('emails.hr_team_leader', compact('user', 'job'), function($message) use ($user, $job)
 				{
-		  		     $message->to($user->email)->subject(\Lang::get('messages.assignement'));
+		  		     $message->to($user->email)->subject(\Lang::get('messages.tests'));
 				});
 			} else {
 				continue;
@@ -135,7 +145,8 @@ class TestController extends Controller {
 	*/
 
 	public function score() {
-		$assignements = Assignement::where('assigned_user', Auth::user()->id)->where('status', 1)->get();
+		$user = Auth::user();
+		$assignements = Assignement::where('assigned_user', $user->id)->where('status', 1)->get();
 		$score = [];
 		foreach ($assignements as $assignement) {
 			foreach ($assignement->quizzes as $quiz) {
@@ -145,7 +156,7 @@ class TestController extends Controller {
 				}
 			}
 		}
-		return view('test.self_result', compact('assignements', 'score'));
+		return view('test.self_result', compact('assignements', 'score', 'user'));
 	}
 
 	/**
@@ -314,6 +325,23 @@ class TestController extends Controller {
 			}
 		}
 	}
+
+
+	public function self_result($uid, $aid, $qid, Request $request) {
+		$user_quiz = User_quiz::where('assignement_id', $aid)->where('quiz_id', $qid)->where('user_id', $uid)->first();
+		if($request->method() == 'POST') {
+			$input = $request->all();
+			$user_quiz->reason = $input['reason'];
+			$user_quiz->save();
+			return redirect()->back();
+		} else {
+			$quiz = Quiz::find($qid);
+			$assignement = Assignement::find($aid);
+
+			return view('test.self', compact('quiz', 'assignement', 'answers', 'uid', 'user_quiz'));
+		}
+	}
+
 	/**
 	 * Show the form for creating a new resource.
 	 *

@@ -18,7 +18,7 @@ class JobController extends Controller {
 	 * @return Response
 	 */
 	public function index(Request $request)
-	{
+	{    
 		if(!in_array(22, $this->privsArray)){
 			return redirect()->back();
 		}
@@ -50,15 +50,39 @@ class JobController extends Controller {
 	 */
 	public function store(Request $request)
 	{
+
+        $emails = explode(';', $request->notified);
+        $emailsCount = count($emails);
+        $emailError = \Lang::get('messages.emailError');
+        $error = FALSE;
+
+        if ($emailsCount == 1) {
+
+			$this->validate($request, [
+			        'notified' => 'email',
+			]);
+
+        } else {
+
+               	foreach($emails as $email){
+            		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			 			 return redirect()->back()->withErrors(['notified' => \Lang::get("messages.email_error")]); 
+		      		}
+		      	}
+	      	}
+
 		$this->validate($request, [
 		        'title' => 'required|max:255',
 		        'candidates' => 'integer',
 		        'quizzes' => 'required',
 //		        'job_officer' => 'required'
 		]);
+
 		$input = $request->all();
 		$newJob = Job::create($input);
-		$newJob->officers()->attach($input['job_officer']);
+		if(!empty($input['job_officer'])) {
+			$newJob->officers()->attach($input['job_officer']);
+		}
 		foreach ($input['quizzes'] as $quiz) {
 			$newJob->quizzes()->attach($quiz);
 		}
@@ -110,10 +134,9 @@ class JobController extends Controller {
 		        'title' => 'required|max:255',
 		        'candidates' => 'integer',
 		        'quizzes' => 'required',
-//		        'job_officer' => 'required'
+		       // 'job_officer' => 'required'
 		]);
 		$input = $request->all();
-
 		$job = Job::find($id);
 		$job->title = $input['title'];
 		$job->description = $input['description'];
@@ -121,6 +144,7 @@ class JobController extends Controller {
 		$job->status = (int)$input['status'];
 		$job->start_at = $input['start_at'];
 		$job->end_at = $input['end_at'];
+		$job->notified = $input['notified'];
 		$job->save();
 		$job->quizzes()->detach();
 		if (!in_array('0', $input['quizzes'])) {
@@ -128,10 +152,28 @@ class JobController extends Controller {
 				$job->quizzes()->attach($quiz);
 			}
 		}
+		$emails = explode(';', $job->notified);
+        $emailsCount = count($emails);
+        
+        if ($emailsCount == 1) {
+
+			$this->validate($request, [
+			        'notified' => 'email',
+			]);
+
+        } else {
+        	   	foreach($emails as $email){
+            		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			 		 return redirect()->back()->withErrors(['notified' => \Lang::get("messages.email_error")]); 
+					}
+	       		 }
+		   	}
+
 		$job->officers()->detach();
 		if(!empty($input['job_officer'])) {
-			$job->officers()->attach($input['job_officer']);			
+			$job->officers()->attach($input['job_officer']);
 		}
+
 		return redirect()->back();
 
 	}

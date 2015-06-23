@@ -95,7 +95,8 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::post('test/save_points', 'TestController@save_points');
 	Route::get('test/save_points', 'TestController@save_points');
 	Route::get('test/continue', 'TestController@goToTest');
-
+	Route::get('self_results/{uid}/{aid}/{qid}', 'TestController@self_result');
+	
 	Route::resource('privileges', 'PrivController');
 
 	Route::get('ajax/get_categories', 'AjaxController@getCategories');
