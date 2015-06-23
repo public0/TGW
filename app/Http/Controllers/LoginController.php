@@ -35,6 +35,11 @@ class LoginController extends Controller {
         * If a user with the email/pass matches a user that has an admin (for example) account then he connects to this account using his AD credentials
         * If there isn't a user with the email found in the local DB than a new user is created with the email taken from AD and the same password from AD
         */
+        $this->validate($request, [
+                'login' => 'required',
+                'password' => 'required',
+        ]);
+        
         $user = NULL;
 		$input = $request->all();
 		if (Auth::attempt(['login' => $input['login'], 'password' => $input['password']])) {
