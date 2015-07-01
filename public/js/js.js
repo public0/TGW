@@ -453,4 +453,17 @@ $(function() {
 		$('#single_'+answer_counter).remove();	
 		--answer_counter;
 	});
+	
+	$('.select').click(function(event) {
+        if(this.checked) { // check select status
+            $('.permission').each(function() {
+                this.checked = true;  //select all
+            });
+        }else{
+            $('.permission').each(function() {
+                this.checked = false; //deselect all            
+            });        
+        }
+    });
+
 });

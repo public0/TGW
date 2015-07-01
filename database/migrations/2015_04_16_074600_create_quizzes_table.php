@@ -15,6 +15,7 @@ class CreateQuizzesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('category_id')->unsigned();
+			$table->integer('user_id')->unsigned();
 			$table->string('name', '60');
 			$table->text('description');
 

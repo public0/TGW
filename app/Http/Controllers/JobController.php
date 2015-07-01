@@ -36,8 +36,8 @@ class JobController extends Controller {
 			return redirect()->back();
 		$quizzes = Quiz::where('category_id', '!=', 1)
 			->orWhere('category_id', 1)
-			->where('from', '<',\Carbon\Carbon::now())
-			->where('to', '>',\Carbon\Carbon::now())
+			//->where('from', '<',\Carbon\Carbon::now())
+			//->where('to', '>',\Carbon\Carbon::now())
 			->lists('name', 'id');
 		$officers = User::select('id', \DB::raw('CONCAT(name, " ", surname) AS name'))->whereIn('user_type_id', [3, 8])->lists('name','id') ;
 		return view('jobs.new_job', compact('quizzes', 'officers'));
@@ -112,8 +112,8 @@ class JobController extends Controller {
 
 		$quizzes = Quiz::where('category_id', '!=', 1)
 			->orWhere('category_id', 1)
-			->where('from', '<',\Carbon\Carbon::now())
-			->where('to', '>',\Carbon\Carbon::now())
+			//->where('from', '<',\Carbon\Carbon::now())
+			//->where('to', '>',\Carbon\Carbon::now())
 			->lists('name', 'id');
 
 		$officers = User::select('id', \DB::raw('CONCAT(name, " ", surname) AS name'))->whereIn('user_type_id', [3, 8])->lists('name','id') ;

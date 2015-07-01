@@ -7,6 +7,7 @@ class Quiz extends Model {
 	protected $fillable = [
 		'name',
 		'category_id',
+		'user_id',
 		'description',
 		'time',
 		'score_junior',
@@ -56,5 +57,9 @@ class Quiz extends Model {
 
 	public function category() {
 		return $this->belongsTo('App\Category', 'category_id', 'id');
+	}
+
+	public function users() {
+		return $this->belongsTo('App\User', 'user_id', 'id');
 	}
 }

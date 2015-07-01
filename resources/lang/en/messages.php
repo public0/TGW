@@ -92,5 +92,6 @@ return [
     'token_exception' => 'Sorry, your session expired. Please try again.',
     'emails' => 'Emails',
     'tests' => 'Finished test.',
-    'email_error' => 'Enter valid emails.'
+    'email_error' => 'Enter valid emails.',
+    'select_all' => 'Select all'
 ];

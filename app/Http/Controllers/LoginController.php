@@ -42,7 +42,7 @@ class LoginController extends Controller {
 			if ($input['password'] == $input['login'] && Auth::user()->user_type_id != 6) {
 				return redirect('auth/reset');
 			} 
-            if(Auth::user()->user_type_id == 6 || Auth::user()->user_type_id == 5) {
+            if(Auth::user()->user_type_id == 6 /*|| Auth::user()->user_type_id == 5*/) {
                 return redirect('test');
             }
             //return redirect()->intended('/');

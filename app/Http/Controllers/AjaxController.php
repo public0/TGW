@@ -23,6 +23,7 @@ class AjaxController extends Controller {
 	public function getCategories() {
 	    $data = new \stdClass;
 	    $user = Auth::user();
+	    $uCat = [];
 	    $userCategories = $user->categories;
 	    foreach ($userCategories as $userCategory) {
 	            $uCat[] = $userCategory->id;
@@ -32,11 +33,11 @@ class AjaxController extends Controller {
 	    }else{
 	            $data->data = Category::all();
 	    } 
-
+        
 	    foreach($data->data as $row) {
 	            $row->name = $row->name;
 	            $row->quizzesCount =  $row->quizzes->count();
-	            $row->actions = view('ajax/categories_view', compact('row'))->render();;
+	            $row->actions = view('ajax/categories_view', compact('row'))->render();
 	    }
 	    return response()->json($data);
     }
@@ -50,11 +51,20 @@ class AjaxController extends Controller {
 		$data->data = Quiz::all();
 		$user = Auth::user();
 		$uCat = [];
+		$uJob = [];
+	
+		
 		$userCategories = $user->categories;
+		
 		foreach ($userCategories as $userCategory) {
 			$uCat[] = $userCategory->id;
 		}
-    	if($user->user_type_id == 4) {
+		
+		foreach ($user->jobs as $userJob) {
+			$uJob[] = $userJob->id;
+		}
+
+    	if($user->user_type_id == 4 ) {
 			foreach($data->data as $key => $row) {
 				$quizJobs = FALSE;
 
@@ -64,7 +74,7 @@ class AjaxController extends Controller {
 					}					
 				}
 
-				if(in_array($row->category['id'], $uCat)) {
+				if(in_array($row->category['id'], $uCat) || ($row->user_id != 0 && $user->id == $row->user_id) ) {
 					$row->categoryName = $row->category['name'];
 					if(in_array(18, $this->privsArray)) {
 			    		if( !$quizJobs ) {
@@ -88,7 +98,49 @@ class AjaxController extends Controller {
 					unset($data->data[$key]);
 				}
 			}
-    	} else {
+    	} elseif($user->user_type_id == 3 || $user->user_type_id == 8) {
+
+			foreach($data->data as $key => $row) {
+				$quizJobs = FALSE;
+                $continue = FALSE;
+				foreach($row->jobs as $qj) {
+					if (!empty($qj->assigned->toArray())) {
+						$quizJobs = TRUE;
+					}	
+				if(array_intersect(array($qj->id), $uJob)){
+					$continue =TRUE;
+				 }			
+				}
+                   
+				if($continue){
+						
+					$row->categoryName = $row->category['name'];
+					if(in_array(18, $this->privsArray) ) {
+			    		if( !$quizJobs ) {
+							$row->privileges = '
+								<form method="GET" action="'.\URL::to('/').'/questions/'.$row->id.'" accept-charset="UTF-8">
+									<input class="btn-sm label-info" type="submit" value="'. \Lang::get("messages.edit").'">
+								</form>
+							';
+			    		} else {
+							$row->privileges = '
+								<form method="GET" action="'.\URL::to('/').'/questions/show_questions/'.$row->id.'" accept-charset="UTF-8">
+									<input class="btn-sm label-info" type="submit" value="'. \Lang::get("messages.view").'">
+								</form>
+							';
+			    		}
+					} else {
+						$row->privileges = '';
+				    }
+						$row->actions = view('ajax/quizzes_view', compact('row', 'quizJobs'))->render();
+				} else {
+					unset($data->data[$key]);
+				}
+								
+
+			}
+				//return response()->json($qJob);	
+    	}else{
 			foreach($data->data as $key => $row) {
 				$quizJobs = FALSE;
 
@@ -97,8 +149,9 @@ class AjaxController extends Controller {
 						$quizJobs = TRUE;
 					}					
 				}
+				
 				$row->categoryName = $row->category['name'];
-				if(in_array(18, $this->privsArray)) {
+				if(in_array(18, $this->privsArray) ) {
 		    		if( !$quizJobs ) {
 						$row->privileges = '
 							<form method="GET" action="'.\URL::to('/').'/questions/'.$row->id.'" accept-charset="UTF-8">
@@ -118,6 +171,7 @@ class AjaxController extends Controller {
 				$row->actions = view('ajax/quizzes_view', compact('row', 'quizJobs'))->render();
 			}
     	}
+
 		$data->data = $data->data->values();
 		return response()->json($data);
 	}
@@ -143,6 +197,7 @@ class AjaxController extends Controller {
 	public function getAssignments() {
 		$data = new \stdClass;
 		$user = Auth::user();
+
 		$userCategories = $user->categories;
 		$uCat = [];
 		foreach ($userCategories as $userCategory) {
@@ -155,7 +210,7 @@ class AjaxController extends Controller {
 		foreach($data->data as $key => $row) {
 			$officersArr = [];
 			$row->show = TRUE;
-			if(empty($row->quizzes->toArray()) && $user->user_type_id == 4 && !empty($uCat)) {
+			if(empty($row->quizzes->toArray()) && $user->user_type_id == 4 && !empty($uCat) ) {
 				$row->show = FALSE;
 			}
 	    	foreach($row->quizzes as $quiz) {
@@ -182,6 +237,11 @@ class AjaxController extends Controller {
 					}
 				}
 			}
+
+    		if($quiz->quiz->user_id != 0 && $user->id == $quiz->quiz->user_id) {
+    			$row->show = TRUE;
+    		}			
+
 			if(!$row->show) {
 				unset($data->data[$key]);
 			} else {
@@ -287,16 +347,29 @@ class AjaxController extends Controller {
 
 	public function getJobs() {
 		$data = new \stdClass;
-		$data->data = Job::all();
-		foreach($data->data as $row) {
-            $row->title = $row->title;
-			$row->candidates =  $row->candidates;
-			$label = ($row->status)?'label-success':'label-danger';
-			$stat =($row->status)?\Lang::get('messages.opened'):\Lang::get('messages.closed');
-			$row->status = '<span class="label '.$label.'">'.$stat.'</span>';
+		$user = Auth::user();
+	    $userJobs = $user->jobs;
+	    $uJob = [];
+	    foreach ($userJobs as $userJob) {
+	            $uJob[] = $userJob->id;
+	    }
+		    if($user->user_type_id == 3){
+		            $data->data = Job::whereIn('id', $uJob)->get();
+		    }else{
+		           $data->data = Job::all();
+		    } 
 
-			$row->actions = view('ajax/jobs_view', compact('row'))->render();
-		}
+          
+			foreach($data->data as $row) {
+	            $row->title = $row->title;
+				$row->candidates =  $row->candidates;
+				$label = ($row->status)?'label-success':'label-danger';
+				$stat =($row->status)?\Lang::get('messages.opened'):\Lang::get('messages.closed');
+				$row->status = '<span class="label '.$label.'">'.$stat.'</span>';
+
+				$row->actions = view('ajax/jobs_view', compact('row'))->render();
+			}
+			
 		return response()->json($data);
 	}
 }

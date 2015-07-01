@@ -18,7 +18,7 @@ class AssignementController extends Controller {
 	 * @return Response
 	 */
 	public function index(Request $request)
-	{
+	{   
 		$search = $request->all();
 		$assignements = NULL;
 		$score = [];
@@ -75,11 +75,18 @@ class AssignementController extends Controller {
 	 * @return Response
 	 */
 	public function create()
-	{
+	{  
 		if(!in_array(13, $this->privsArray))
 			return redirect()->back();
 		$jobs = [ 0 => \Lang::get('messages.select')];
-		$jobs += Job::where('status', '1')->lists('title', 'id');
+
+ 		$yesterday = \Carbon\Carbon::now()->subDay()->toDateTimeString(); 
+
+ 		$date = \Carbon\Carbon::now()->toDateTimeString(); 
+		$jobs += Job::where('status', '1')
+		->where('start_at','<',$date)
+		->where('end_at','>',$yesterday)
+		->lists('title', 'id');
 		$users = User::select(\DB::raw("CONCAT(name, ' ', surname) AS full_name, id"))->where('user_type_id',6)->lists('full_name', 'id');
 
 		return view('assignement.new_assignement', compact('jobs', 'users'));

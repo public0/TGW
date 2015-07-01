@@ -107,15 +107,14 @@ class UserController extends Controller {
                        $privilegesArray[] = $privilege->id;
                  	} elseif (in_array($privilege->privilege,['Assignments']) &&  $privilege->type !='u'){
                         $privilegesArray[] = $privilege->id;
-             	    } else {
-						continue;
-             	    }	
-                 	     
+             	    }
                  }
 				break;
 			case 4: /* Tehnic */
 				foreach ($privileges as $privilege) {
-					if(in_array($privilege->privilege, ['Questions', 'Quizzes', 'Assignments'])) {
+					if(in_array($privilege->privilege, ['Questions', 'Quizzes'])) {
+						$privilegesArray[] = $privilege->id;
+					} elseif(in_array($privilege->privilege,['Assignments'])  && $privilege->type == 'r') {
 						$privilegesArray[] = $privilege->id;
 					}
 				}
@@ -137,10 +136,7 @@ class UserController extends Controller {
                    $privilegesArray[] = $privilege->id;
              	} elseif (in_array($privilege->privilege,['Assignments']) &&  $privilege->type !='u'){
                     $privilegesArray[] = $privilege->id;
-         	    } else {
-					continue;
-         	    }	
-             	     
+         	    }             	     
              }
 			break;
 
@@ -241,35 +237,56 @@ class UserController extends Controller {
 		$user->save();
 		$user->privileges()->detach();
 		switch ($input['user_type_id']) {
-			case 1: /* Admin */
+		case 1: /* Admin */
 				foreach ($privileges as $privilege) {
 					$privilegesArray[] = $privilege->id;
 				}
 				break;
-			
 			case 2: /* HR */
 				foreach ($privileges as $privilege) {
-					if(in_array($privilege->privilege, ['Users', 'Assignements', ])) {
+					if(in_array($privilege->privilege, ['Users', 'Assignments' ])) {
 						$privilegesArray[] = $privilege->id;
 					}
 				}
 				break;
-
+			case 3: /* HR Officer */
+                 foreach ($privileges as $privilege){
+                 	if(in_array($privilege->privilege,['Users']) && $privilege->type !='u' && $privilege->type !='d'){
+                       $privilegesArray[] = $privilege->id;
+                 	} elseif (in_array($privilege->privilege,['Assignments']) &&  $privilege->type !='u'){
+                        $privilegesArray[] = $privilege->id;
+             	    }
+                 }
+				break;
 			case 4: /* Tehnic */
 				foreach ($privileges as $privilege) {
 					if(in_array($privilege->privilege, ['Questions', 'Quizzes'])) {
 						$privilegesArray[] = $privilege->id;
+					} elseif(in_array($privilege->privilege,['Assignments']) &&  $privilege->type =='r') {
+						$privilegesArray[] = $privilege->id;
 					}
 				}
 				break;
-
 			case 4: /* Intern */
 				# code...
 				break;
-
 			case 5: /* Candidate */
 				# code...
 				break;
+			case 7: /* Candidate */
+				foreach ($privileges as $privilege) {
+					$privilegesArray[] = $privilege->id;
+				}
+				break;
+			case 8: /* HR TEAM LEADER */
+             foreach ($privileges as $privilege){
+             	if(in_array($privilege->privilege,['Users']) && $privilege->type !='u' && $privilege->type !='d'){
+                   $privilegesArray[] = $privilege->id;
+             	} elseif (in_array($privilege->privilege,['Assignments']) &&  $privilege->type !='u'){
+                    $privilegesArray[] = $privilege->id;
+         	    }             	     
+             }
+			break;
 		}
 		$user->privileges()->attach($privilegesArray);
 		$user->categories()->detach();

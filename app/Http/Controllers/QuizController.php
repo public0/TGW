@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Quiz;
 use App\Category;
 use Auth;
-
+use App\User;
 class QuizController extends Controller {
 
 	/**
@@ -48,12 +48,13 @@ class QuizController extends Controller {
 	 * @return Response
 	 */
 	public function create()
-	{
+	{  
 		if(!in_array(5, $this->privsArray))
 			return redirect()->back();
 		$categories = [ 0 => \Lang::get('messages.select')];
 		$categories += Category::lists('name','id');
-		return view('quizzes.new_quiz', compact('categories'));
+		$user = Auth::user()->id;
+		return view('quizzes.new_quiz', compact('categories','user'));
 	}
 
 	/**
@@ -75,6 +76,7 @@ class QuizController extends Controller {
 		$input['score_junior'] = (int)$input['score_junior'];
 		$input['score_mid'] = (int)$input['score_mid'];
 		$input['score_senior'] = (int)$input['score_senior'];
+		$input['user_id'] = (int)Auth::user()->id;
 
 		if($input['category_id'] == 1) {
 			$this->validate($request, [
