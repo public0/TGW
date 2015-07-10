@@ -22,6 +22,7 @@ class CreateQuizzesTable extends Migration {
 			$table->integer('score_junior')->unsigned();
 			$table->integer('score_mid')->unsigned();
 			$table->integer('score_senior')->unsigned();
+			$table->integer('score')->unsigned();
 
 			$table->boolean('show_intro')->default(0);
 			$table->text('intro');

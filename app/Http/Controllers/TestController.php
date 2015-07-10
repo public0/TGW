@@ -317,14 +317,14 @@ class TestController extends Controller {
     private static function sendMails($job, $emails, $users, $full = FALSE){
 
 		if(!$full) {
-	        $sendfull = FALSE;
+	        $sendFull = FALSE;
 	        foreach ($job->quizzes as $job_quizz) {
                 $send = FALSE;
 
                 foreach($job_quizz->questions as $qQuestion){
                     if($qQuestion->question_type_id == 3){
                         $send = TRUE;
-                        $sendfull = TRUE;
+                        $sendFull = TRUE;
                     }
                 }
 
@@ -351,11 +351,11 @@ class TestController extends Controller {
             }
         }
 
-        if($full || !$sendfull) {
+        if($full || !$sendFull) {
 
             $officers = [];
             foreach($job->officers as $officer){
-                    $officers[] = $officer->id;
+                $officers[] = $officer->id;
             }
 
             foreach($users as $user){
@@ -363,9 +363,8 @@ class TestController extends Controller {
                 if($user->user_type_id == 3 && in_array($user->id, $officers)){
                     \Mail::send('emails.hr_officer', compact('user', 'job'), function($message) use ($user, $job)
                     {
-                             $message->to($user->email)->subject(\Lang::get('messages.tests'));
+                        $message->to($user->email)->subject(\Lang::get('messages.tests'));
                     });
-
                 } elseif($user->user_type_id == 8 && in_array($user->id, $officers)){
 					\Mail::send('emails.hr_team_leader', compact('user', 'job'), function($message) use ($user, $job)
 					{

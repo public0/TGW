@@ -129,30 +129,21 @@ class QuestionController extends Controller {
 		        'question_type_id' => 'required',
 		]);
 
-
-/*		switch ($request->question_type_id) {
-			case 1:
-				$this->validate($request, [
-					'multi_text[]' => 'required',
-					'multi_value[]' => 'required',
-				]);
-				break;
-			case 2:
-				$this->validate($request, [
-					'single_text[]' => 'required',
-					'single_value[]' => 'required',
-				]);
-				break;
-			case 3:
-				break;
-			case '4':
-				dd($input);
-				break;			
-		}
-*/		$input = Request::all();
+		$input = Request::all();
 		$newQuestion = Question::create($input);
 		$newQuestion->code = $input['code'];
+	
+		$parentQuiz = Quiz::where('id', '=', $id)->first();
+		$sum = $parentQuiz->questionsPoints;
+		foreach ($sum as $row){ 
+        	$sumAll = $row['sum'];
+        }
+		$parentQuiz->score = $sumAll + $newQuestion->points ;
+
 		$newQuestion->save();
+	    $parentQuiz->save();
+
+
 		$file = Request::file('question_image');
 
 		if(!is_null($file) && $file->isValid()) {
@@ -241,27 +232,6 @@ class QuestionController extends Controller {
 		        'question_type_id' => 'required',
 		]);
 
-
-/*		switch ($request->question_type_id) {
-			case 1:
-				$this->validate($request, [
-					'multi_text[]' => 'required',
-					'multi_value[]' => 'required',
-				]);
-				break;
-			case 2:
-				$this->validate($request, [
-					'single_text[]' => 'required',
-					'single_value[]' => 'required',
-				]);
-				break;
-			case 3:
-				break;
-			case '4':
-				dd($input);
-				break;			
-		}
-*/
 		$input = Request::all();
 
 		$question = Question::find($id);
@@ -283,6 +253,18 @@ class QuestionController extends Controller {
 		$question->save();
 		$question->answers()->delete();
 
+		$quiz = $question->quiz;
+		foreach ($quiz as $row){ 
+        	$quizId = $row['id'];
+        }
+		$parentQuiz = Quiz::where('id', '=', $quiz_id)->first();
+		$sum = $parentQuiz->questionsPoints;
+		foreach ($sum as $row){ 
+        	$sumAll = $row['sum'];
+        }
+		$parentQuiz->score = $sumAll - $request->points + $question->points ;
+		
+	    $parentQuiz->save();
 		
 		//$question->quiz()->attach($id);
 		switch ($input['question_type_id']) {
@@ -338,7 +320,21 @@ class QuestionController extends Controller {
 		if(!in_array(20, $this->privsArray))
 			return redirect()->back();
 		$question = Question::find($id);
-		$question->delete();		
+
+		$quiz = $question->quiz;
+		foreach ($quiz as $row){ 
+        	$quiz_id = $row['id'];
+        }
+		$parentQuiz = Quiz::where('id', '=', $quiz_id)->first();
+		$sum = $parentQuiz->questionsPoints;
+		foreach ($sum as $row){ 
+        	$sumAll = $row['sum'];
+        }
+		$parentQuiz->score = $sumAll - $question->points ;
+
+	    $question->delete();
+	    $parentQuiz->save();
+
 		return redirect()->back();
 	}
 

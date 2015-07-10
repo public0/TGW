@@ -13,6 +13,7 @@ class Quiz extends Model {
 		'score_junior',
 		'score_mid',
 		'score_senior',
+		'score',
 		'show_intro',
 		'intro',
 		'from',
