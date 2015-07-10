@@ -365,6 +365,11 @@ class TestController extends Controller {
                     {
                         $message->to($user->email)->subject(\Lang::get('messages.tests'));
                     });
+                } elseif($user->user_type_id == 2 && in_array($user->id, $officers)){
+                    \Mail::send('emails.manager', compact('user', 'job'), function($message) use ($user, $job)
+                    {
+                        $message->to($user->email)->subject(\Lang::get('messages.tests'));
+                    });
                 } elseif($user->user_type_id == 8 && in_array($user->id, $officers)){
 					\Mail::send('emails.hr_team_leader', compact('user', 'job'), function($message) use ($user, $job)
 					{
