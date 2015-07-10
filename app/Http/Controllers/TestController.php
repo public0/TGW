@@ -59,7 +59,7 @@ class TestController extends Controller {
             $assignement->status = 1;
             $assignement->save();
 
-            TestController::sendMails($job, $emails, $users);
+            TestController::sendMails(Auth::user(), $job, $emails, $users);
             return redirect('test/score');
         }
         if($assignement->started_at == '0000-00-00 00:00:00') {
@@ -89,7 +89,7 @@ class TestController extends Controller {
             $assignement->save();
 
 
-            TestController::sendMails($job, $emails, $users);
+            TestController::sendMails(Auth::user(), $job, $emails, $users);
         /*
         TO DO: Send email only if quiz has questions with free text
         TO DO: Create private function send emails params: obj jobs, array emails, obj users
@@ -247,7 +247,9 @@ class TestController extends Controller {
             $users = User::whereIn('user_type_id', [3,4,6,8])->orderBy('id', 'ASC')->get();
             $emails = explode(';', $job->notified);
 
-            TestController::sendMails($job, $emails, $users, TRUE);
+            $user = User::find($uid);
+
+            TestController::sendMails($user, $job, $emails, $users, TRUE);
 
             return redirect()->back();
         } else {
@@ -314,7 +316,7 @@ class TestController extends Controller {
     * Send Emails
     */
 
-    private static function sendMails($job, $emails, $users, $full = FALSE){
+    private static function sendMails($candidate, $job, $emails, $users, $full = FALSE){
 
 		if(!$full) {
 	        $sendFull = FALSE;
@@ -340,11 +342,11 @@ class TestController extends Controller {
 		}
 
 
-        $emails=explode(';', $job->notified);
+        $emails = explode(';', $job->notified);
         if(!empty($emails) && $emails[0] != '') {
             foreach($emails as $notify){
-                $user=Auth::user();
-				\Mail::send('emails.notifiers', compact('user', 'job'), function($message) use ($user, $job, $notify)
+                //$user = Auth::user();
+				\Mail::send('emails.notifiers', compact('candidate', 'job'), function($message) use ($candidate, $job, $notify)
 				{
 					$message->to($notify)->subject(\Lang::get('messages.tests'));
 				});
