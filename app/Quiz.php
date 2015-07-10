@@ -60,6 +60,10 @@ class Quiz extends Model {
 		return $this->belongsTo('App\Category', 'category_id', 'id');
 	}
 
+	public function assigned() {
+		return $this->hasMany('App\User_quiz', 'quiz_id', 'id');		
+	}
+
 	public function users() {
 		return $this->belongsTo('App\User', 'user_id', 'id');
 	}

@@ -77,7 +77,7 @@ class AjaxController extends Controller {
 				if(in_array($row->category['id'], $uCat) || ($row->user_id != 0 && $user->id == $row->user_id) ) {
 					$row->categoryName = $row->category['name'];
 					if(in_array(18, $this->privsArray)) {
-			    		if( !$quizJobs ) {
+			    		if( /*!$quizJobs && */!$row->assigned->count()) {
 							$row->privileges = '
 								<form method="GET" action="'.\URL::to('/').'/questions/'.$row->id.'" accept-charset="UTF-8">
 									<input class="btn-sm label-info" type="submit" value="'. \Lang::get("messages.edit").'">
@@ -107,16 +107,16 @@ class AjaxController extends Controller {
 					if (!empty($qj->assigned->toArray())) {
 						$quizJobs = TRUE;
 					}	
-				if(array_intersect(array($qj->id), $uJob)){
-					$continue =TRUE;
-				 }			
+					if(array_intersect(array($qj->id), $uJob)){
+						$continue =TRUE;
+				 	}			
 				}
                    
 				if($continue){
 						
 					$row->categoryName = $row->category['name'];
 					if(in_array(18, $this->privsArray) ) {
-			    		if( !$quizJobs ) {
+			    		if( /*!$quizJobs && */!$row->assigned->count()) {
 							$row->privileges = '
 								<form method="GET" action="'.\URL::to('/').'/questions/'.$row->id.'" accept-charset="UTF-8">
 									<input class="btn-sm label-info" type="submit" value="'. \Lang::get("messages.edit").'">
@@ -143,6 +143,7 @@ class AjaxController extends Controller {
     	}else{
 			foreach($data->data as $key => $row) {
 				$quizJobs = FALSE;
+					//dd($row->assigned);
 
 				foreach($row->jobs as $qj) {
 					if (!empty($qj->assigned->toArray())) {
@@ -152,7 +153,7 @@ class AjaxController extends Controller {
 				
 				$row->categoryName = $row->category['name'];
 				if(in_array(18, $this->privsArray) ) {
-		    		if( !$quizJobs ) {
+		    		if( /*!$quizJobs && */!$row->assigned->count()) {
 						$row->privileges = '
 							<form method="GET" action="'.\URL::to('/').'/questions/'.$row->id.'" accept-charset="UTF-8">
 								<input class="btn-sm label-info" type="submit" value="'. \Lang::get("messages.edit").'">
