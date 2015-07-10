@@ -281,9 +281,10 @@ class AjaxController extends Controller {
 			if(isset($row->user->name)) {
 				if(isset($row->quizzes) && !$row->quizzes->isEmpty()) {
 					foreach ($row->quizzes as $quiz) {
-						if($quiz->score != 0) {
+						if($quiz->quiz->score) {
 							$score[$quiz->id] = $quiz->score;
 						} else {
+							$score[$quiz->id] = 0;
 							foreach($quiz->quiz->questions as $question) {
 								$score[$quiz->id] += $question->points;
 							}
@@ -318,7 +319,7 @@ class AjaxController extends Controller {
 
 						$row->goal = view('ajax/quiz_assignment_pass_score', compact('row', 'quiz', 'user', 'uCat'))->render();
 						if($score[$quiz->id]) {
-							$row->score = $score[$quiz->id];//(!$quiz->done)?'0%': round(($quiz->mark / $score[$quiz->id]) * 100, 1).'%';
+							$row->score = (!$quiz->done)?'0%': round(($quiz->mark / $score[$quiz->id]) * 100, 1).'%';
 						} else {
 							$row->score = '0%';
 						}
