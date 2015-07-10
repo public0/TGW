@@ -262,7 +262,7 @@ class AjaxController extends Controller {
 	*/
 
 	public function getAssignedQuizzes($qid) {
-
+		
 		$data = new \stdClass;
 		$user = Auth::user();
 		$userCategories = $user->categories;
@@ -277,36 +277,16 @@ class AjaxController extends Controller {
 		$score = [];
 		$i = 1;
 		$job = [];
-
-/*		$jobsArray  = [];
-		foreach($data->data as $key => $row) {
-			if(isset($row->user->name)) {
-				if(isset($row->quizzes) && !$row->quizzes->isEmpty()) {
-				}
-			}
-		}
-*/
-		$jobMarkArray = [];
 		foreach($data->data as $key => $row) {
 			if(isset($row->user->name)) {
 				if(isset($row->quizzes) && !$row->quizzes->isEmpty()) {
 					foreach ($row->quizzes as $quiz) {
-
-
-/*
-						if($score[$quiz->id]) {
-							$row->score = (!$quiz->done)? 0 : round(($quiz->mark / $score[$quiz->id]) * 100, 1);
+						if($quiz->score != 0) {
+							$score[$quiz->id] = $quiz->score;
 						} else {
-							$row->score = 0;
-						}
-
-						$jobMarkArray[$row->job->id][$row->user->id] = $row->score;
-
-*/
-
-						$score[$quiz->id] = 0;
-						foreach($quiz->quiz->questions as $question) {
-							$score[$quiz->id] += $question->points;
+							foreach($quiz->quiz->questions as $question) {
+								$score[$quiz->id] += $question->points;
+							}
 						}
 						$setQuiz = Quiz::find($quiz->quiz->id);
 						$setQuiz->score = $score[$quiz->id];
@@ -337,9 +317,8 @@ class AjaxController extends Controller {
 						}
 
 						$row->goal = view('ajax/quiz_assignment_pass_score', compact('row', 'quiz', 'user', 'uCat'))->render();
-						/* calculam  scorul deja aici ar trebuie doar apendui % ca string ptr output*/
 						if($score[$quiz->id]) {
-							$row->score = (!$quiz->done)?'0%': round(($quiz->mark / $score[$quiz->id]) * 100, 1).'%';
+							$row->score = $score[$quiz->id];//(!$quiz->done)?'0%': round(($quiz->mark / $score[$quiz->id]) * 100, 1).'%';
 						} else {
 							$row->score = '0%';
 						}
