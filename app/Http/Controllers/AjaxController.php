@@ -221,9 +221,14 @@ class AjaxController extends Controller {
 	    			} else {
 	    				$row->show = FALSE;
 	    			}
+		    		if($quiz->quiz->user_id != 0 && $user->id == $quiz->quiz->user_id) {
+		    			$row->show = TRUE;
+		    			break;
+		    		}
 	    		} else {
 		    		$row->show = TRUE;
 	    		}
+//	    		echo $row->show.'-'.$quiz->quiz->id.'|';
 	    	}
 			if(in_array($user->user_type_id, [3, 8])) {
 				if($row->job->officers) {
@@ -238,9 +243,6 @@ class AjaxController extends Controller {
 				}
 			}
 
-    		if($quiz->quiz->user_id != 0 && $user->id == $quiz->quiz->user_id) {
-    			$row->show = TRUE;
-    		}			
 
 			if(!$row->show) {
 				unset($data->data[$key]);
@@ -251,9 +253,8 @@ class AjaxController extends Controller {
 				$row->jobQuizzes = view('ajax/assignments_quizzes', compact('row', 'user', 'uCat'))->render();
 			}
 		}
-
+//		die();
 		$data->data = $data->data->values();
-
 		return response()->json($data);
 	}
 	/**
@@ -261,6 +262,7 @@ class AjaxController extends Controller {
 	*/
 
 	public function getAssignedQuizzes($qid) {
+
 		$data = new \stdClass;
 		$user = Auth::user();
 		$userCategories = $user->categories;
@@ -275,10 +277,33 @@ class AjaxController extends Controller {
 		$score = [];
 		$i = 1;
 		$job = [];
+
+/*		$jobsArray  = [];
+		foreach($data->data as $key => $row) {
+			if(isset($row->user->name)) {
+				if(isset($row->quizzes) && !$row->quizzes->isEmpty()) {
+				}
+			}
+		}
+*/
+		$jobMarkArray = [];
 		foreach($data->data as $key => $row) {
 			if(isset($row->user->name)) {
 				if(isset($row->quizzes) && !$row->quizzes->isEmpty()) {
 					foreach ($row->quizzes as $quiz) {
+
+
+/*
+						if($score[$quiz->id]) {
+							$row->score = (!$quiz->done)? 0 : round(($quiz->mark / $score[$quiz->id]) * 100, 1);
+						} else {
+							$row->score = 0;
+						}
+
+						$jobMarkArray[$row->job->id][$row->user->id] = $row->score;
+
+*/
+
 						$score[$quiz->id] = 0;
 						foreach($quiz->quiz->questions as $question) {
 							$score[$quiz->id] += $question->points;
@@ -309,6 +334,7 @@ class AjaxController extends Controller {
 						}
 
 						$row->goal = view('ajax/quiz_assignment_pass_score', compact('row', 'quiz', 'user', 'uCat'))->render();
+						/* calculam  scorul deja aici ar trebuie doar apendui % ca string ptr output*/
 						if($score[$quiz->id]) {
 							$row->score = (!$quiz->done)?'0%': round(($quiz->mark / $score[$quiz->id]) * 100, 1).'%';
 						} else {
@@ -358,8 +384,6 @@ class AjaxController extends Controller {
 		    }else{
 		           $data->data = Job::all();
 		    } 
-
-          
 			foreach($data->data as $row) {
 	            $row->title = $row->title;
 				$row->candidates =  $row->candidates;
@@ -369,7 +393,31 @@ class AjaxController extends Controller {
 
 				$row->actions = view('ajax/jobs_view', compact('row'))->render();
 			}
-			
 		return response()->json($data);
 	}
+
+	public function assignedUsers() {
+        $data = new \stdClass;
+		$input = \Input::get('option');
+//		$job = Job::find($input);
+		$uJobs = [];
+        $users = User::select(\DB::raw("CONCAT(name, ' ', surname) AS full_name, id"))->where('user_type_id',6)->get();
+	
+		foreach($users as $user){
+			$showUser = TRUE;
+           foreach($user->assignedJobs as $job){
+           
+				if(array_intersect($input,array($job->assigned_job))){
+					$showUser = FALSE;		
+				}		
+			}
+			if($showUser){
+				
+				$uJobs[$user->id] = $user->full_name;//'<option value ="'.$user->id.'" >'.$user->full_name.'</option>';
+			}
+		}
+	
+		return response()->json($uJobs);
+	}
+
 }

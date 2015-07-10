@@ -63,17 +63,18 @@ class JobController extends Controller {
 			]);
 
         } else {
-
-               	foreach($emails as $email){
-            		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			 			 return redirect()->back()->withErrors(['notified' => \Lang::get("messages.email_error")]); 
+	           	foreach($emails as $email){
+	        		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			 			return redirect()->back()->withErrors(['notified' => \Lang::get("messages.email_error")]); 
 		      		}
 		      	}
 	      	}
 
 		$this->validate($request, [
+				'start_at' => 'required',
+				'end_at' => 'required',
 		        'title' => 'required|max:255',
-		        'candidates' => 'integer',
+		        'candidates' => 'required|integer',
 		        'quizzes' => 'required',
 //		        'job_officer' => 'required'
 		]);
@@ -131,6 +132,8 @@ class JobController extends Controller {
 	public function update($id, Request $request)
 	{
 		$this->validate($request, [
+				'start_at' => 'required',
+				'end_at' => 'required',
 		        'title' => 'required|max:255',
 		        'candidates' => 'integer',
 		        'quizzes' => 'required',

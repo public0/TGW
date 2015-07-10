@@ -65,7 +65,7 @@
 				</div>
 				<div class="form-group">
 					{!! Form::label('description', Lang::get('messages.description')) !!}
-					{!! Form::textarea('description', $job->description, ['class' => 'form-control']) !!}
+					{!! Form::textarea('description', $job->description, ['class' => 'form-control', 'rows' => '4']) !!}
 				</div>
 				<div class="form-group">
 					<?php echo $errors->first('candidates','<div class="alert alert-danger" role="alert">

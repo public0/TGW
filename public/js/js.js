@@ -318,6 +318,8 @@ $(function() {
 	 	enableFiltering: true,
 	 	buttonWidth: '100%',
 	 	onChange: function(element, checked) {
+			var users = $('#assigned_users');
+			users.empty();
 			var brands = $('#assigned_job option:selected');
 	        var selected = [];
 	        $(brands).each(function(index, brand){
@@ -327,11 +329,30 @@ $(function() {
 					au.val('').trigger('liszt:updated');
 				} else {
 					$('#userr').show();
+					au.multiselect('refresh');
+					au.val('').trigger('liszt:updated');
 				}
-	            selected.push([$(this).val()]);
+	            selected.push($(this).val());
 	        });
 
-	 	}
+	        var assigned_users = $('#assigned_job').attr('data-users');
+
+
+			$.get(assigned_users, 
+				{ option : selected }, 
+				function(data) {
+						console.log(data);
+						//var $select = $('#down'); 
+					var vData = [];
+					$.each(data,function(key, v) 
+					{
+						vData.push({label:v, value: key});
+						users.append('<option value=' + key + '>' + v + '</option>');
+					});
+						au.multiselect('dataprovider', vData);
+					});
+
+		 	}
 	 });
 
 	 $('#category').multiselect({

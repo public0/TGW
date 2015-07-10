@@ -13,7 +13,7 @@
   					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
   					<span class="sr-only">Error:</span>:message</div>'); ?>					
 					{!! Form::label('assigned_job', Lang::get('messages.job')) !!}
-					{!! Form::select('assigned_job', $jobs, null, ['class' => 'form-control']) !!}
+					{!! Form::select('assigned_job', $jobs, null, ['class' => 'form-control', 'data-users' => url('ajax/assigned_users')]) !!}
 				</div>
 				<div id="userr">
 					
@@ -22,7 +22,7 @@
 	  					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 	  					<span class="sr-only">Error:</span>:message</div>'); ?>					
 						{!! Form::label('assigned_users', Lang::get('messages.user')) !!}
-						{!! Form::select('assigned_users', $users, null, ['class' => 'form-control', 'multiple']) !!}
+						{!! Form::select('assigned_users', []/*$users*/, null, ['class' => 'form-control', 'multiple']) !!}
 					</div>
 
 				</div>

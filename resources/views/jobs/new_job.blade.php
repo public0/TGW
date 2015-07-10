@@ -20,7 +20,7 @@
   					<span class="sr-only">Error:</span>:message</div>'); ?>					
 					{!! Form::label('start_at', Lang::get('messages.start_at')) !!}
 
-					{!! Form::text('start_at', '0000-00-00', ['class' => 'form-control']) !!}
+					{!! Form::text('start_at', NULL, ['class' => 'form-control']) !!}
 				</div>
 				<div class="form-group">
 					<?php echo $errors->first('end_at','<div class="alert alert-danger" role="alert">
@@ -28,7 +28,7 @@
   					<span class="sr-only">Error:</span>:message</div>'); ?>					
 					{!! Form::label('end_at', Lang::get('messages.end_at')) !!}
 
-					{!! Form::text('end_at', '0000-00-00', ['class' => 'form-control']) !!}
+					{!! Form::text('end_at', NULL, ['class' => 'form-control']) !!}
 				</div>
 				<div class="form-group">
 					<?php echo $errors->first('title','<div class="alert alert-danger" role="alert">
@@ -61,7 +61,7 @@
 				</div>
 				<div class="form-group">
 					{!! Form::label('description', Lang::get('messages.description')) !!}
-					{!! Form::textarea('description', null, ['class' => 'form-control']) !!}
+					{!! Form::textarea('description', null, ['class' => 'form-control', 'rows' => '4']) !!}
 				</div>
 				<div class="form-group">
 					<?php echo $errors->first('candidates','<div class="alert alert-danger" role="alert">

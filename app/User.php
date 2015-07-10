@@ -58,4 +58,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function jobs() {
 		return $this->belongsToMany('App\Job', 'job_officer', 'user_id', 'job_id')->withTimestamps();
 	}
+	/*
+	* assigned candidates
+	*/
+	public function assignedJobs() {
+        return $this->hasMany('App\Assignement', 'assigned_user', 'id');
+    }
 }

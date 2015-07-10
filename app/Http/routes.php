@@ -105,6 +105,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('ajax/get_assignments', 'AjaxController@getAssignments');
 	Route::get('ajax/get_assigned_quizzes/{id}', 'AjaxController@getAssignedQuizzes');
 	Route::get('ajax/get_jobs', 'AjaxController@getJobs');
+	Route::get('ajax/assigned_users', 'AjaxController@assignedUsers');
 
 });
 
