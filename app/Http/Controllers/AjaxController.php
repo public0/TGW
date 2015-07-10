@@ -287,10 +287,10 @@ class AjaxController extends Controller {
 							foreach($quiz->quiz->questions as $question) {
 								$score[$quiz->id] += $question->points;
 							}
+							$setQuiz = Quiz::find($quiz->quiz->id);
+							$setQuiz->score = $score[$quiz->id];
+							$setQuiz->save();
 						}
-						$setQuiz = Quiz::find($quiz->quiz->id);
-						$setQuiz->score = $score[$quiz->id];
-						$setQuiz->save();
 
 					    if(array_key_exists($row->job->id, $job)) {
 					    	$i = $job[$row->job->id];
