@@ -55,7 +55,7 @@ $(function() {
 	$('#categories_table').dataTable({
 		'ajax': 'ajax/get_categories',
 		'columnDefs' : [
-			{className: 'text-center', "targets": [ 0, 1, 3 ]}
+			{className: 'text-center', "targets": [ 0, 1, 2, 3 ]}
 		],
 		"iDisplayLength" : 25,
 		'columns' : [
