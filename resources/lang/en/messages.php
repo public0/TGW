@@ -93,5 +93,7 @@ return [
     'emails' => 'Emails',
     'tests' => 'Finished test.',
     'email_error' => 'Enter valid emails.',
-    'select_all' => 'Select all'
+    'select_all' => 'Select all',
+    'technicians' => 'Technicians',
+    'new_user' => 'New User',
 ];

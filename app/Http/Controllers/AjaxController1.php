@@ -36,12 +36,6 @@ class AjaxController extends Controller {
         
 	    foreach($data->data as $row) {
 	            $row->name = $row->name;
-
-	            $row->technicians = '';
-	            foreach ($row->users as $key => $value) {
-	             	$row->technicians .= $value['name'].' '.$value['surname'].'<br />';
-	            }
-
 	            $row->quizzesCount =  $row->quizzes->count();
 	            $row->actions = view('ajax/categories_view', compact('row'))->render();
 	    }

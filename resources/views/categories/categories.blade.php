@@ -12,6 +12,7 @@
 					    <thead>
 					        <tr>
 					            <th class="text-center">{{ Lang::get('messages.name') }}</th>
+					            <th class="text-center">{{ Lang::get('messages.technicians') }}</th>
 					            <th class="text-center">{{ Lang::get('messages.quizzes') }}</th>
 					            <th class="text-center">{{ Lang::get('messages.actions') }}</th>
 					        </tr>

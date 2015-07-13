@@ -152,6 +152,14 @@ class UserController extends Controller {
 		if(isset($input['categories'])) {
 			$newUser->categories()->attach($input['categories']);
 		}
+
+		if($input['user_type_id'] != 6){
+            $userEmail = ['userEmail'=>$input['email']];
+            \Mail::send('emails.new_user', compact('newUser', 'userEmail'), function($message) use ($newUser, $userEmail)
+            {
+                $message->to($userEmail['userEmail'])->subject(\Lang::get('messages.new_user'));
+            });
+        }
 		return redirect('users');		
 	}
 

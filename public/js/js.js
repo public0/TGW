@@ -60,6 +60,7 @@ $(function() {
 		"iDisplayLength" : 25,
 		'columns' : [
 			{'data' : 'name'},
+			{'data' : 'technicians'},
 			{'data' : 'quizzesCount'},
 			{'data' : 'actions'},
 		],
