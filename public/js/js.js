@@ -55,7 +55,7 @@ $(function() {
 	$('#categories_table').dataTable({
 		'ajax': 'ajax/get_categories',
 		'columnDefs' : [
-			{className: 'text-center', "targets": [ 0, 1, 2, 3 ]}
+			{className: 'text-center', "targets": [ 0, 1, 2 ]}
 		],
 		"iDisplayLength" : 25,
 		'columns' : [
@@ -124,7 +124,7 @@ $(function() {
 				{'data' : 'goal'},
 				{'data' : 'score'},
 				{'data' : 'quizShow'},
-				{'data' : 'actions'},
+				//{'data' : 'actions'},
 			],
 	});
 
@@ -154,6 +154,7 @@ $(function() {
 			{'data' : 'jobTitle'},
 			{'data' : 'period'},
 			{'data' : 'jobQuizzes'},
+			{'data' : 'actions'},
 		],
 	});
 

@@ -59,7 +59,7 @@ class TestController extends Controller {
             $assignement->status = 1;
             $assignement->save();
 
-            TestController::sendMails(Auth::user(), $job, $emails, $users);
+            TestController::sendMails(Auth::user(), $assignement, $emails, $users);//TestController::sendMails(Auth::user(), $job, $emails, $users);
             return redirect('test/score');
         }
         if($assignement->started_at == '0000-00-00 00:00:00') {
@@ -89,7 +89,7 @@ class TestController extends Controller {
             $assignement->save();
 
 
-            TestController::sendMails(Auth::user(), $job, $emails, $users);
+            TestController::sendMails(Auth::user(), $assignement, $emails, $users);//TestController::sendMails(Auth::user(), $job, $emails, $users);
         /*
         TO DO: Send email only if quiz has questions with free text
         TO DO: Create private function send emails params: obj jobs, array emails, obj users
@@ -249,7 +249,7 @@ class TestController extends Controller {
 
             $user = User::find($uid);
 
-            TestController::sendMails($user, $job, $emails, $users, TRUE);
+            TestController::sendMails($user, $assignement, $emails, $users, TRUE);//TestController::sendMails($user, $job, $emails, $users, TRUE, TestController::maxiScore($assignement));
 
             return redirect()->back();
         } else {
@@ -316,10 +316,19 @@ class TestController extends Controller {
     * Send Emails
     */
 
-    private static function sendMails($candidate, $job, $emails, $users, $full = FALSE){
-
+    private static function sendMails($candidate, $assignement, $emails, $users, $full = FALSE){ //private static function sendMails($candidate, $job, $emails, $users, $full = FALSE, $maxiScore){
+        $job = $assignement->job;  
+        $maxiArr = TestController::maxiScore($assignement); 
+        
+        $officers = [];
+        foreach($job->officers as $officer){
+            $officers[] = $officer->id;
+        }
 		if(!$full) {
 	        $sendFull = FALSE;
+
+            $techQuizzes = array();
+            $mm = 0;
 	        foreach ($job->quizzes as $job_quizz) {
                 $send = FALSE;
 
@@ -327,52 +336,100 @@ class TestController extends Controller {
                     if($qQuestion->question_type_id == 3){
                         $send = TRUE;
                         $sendFull = TRUE;
+
+                        $job_quizz = $job_quizz;
+
+                        foreach($job_quizz->category->users as $technicians) {
+                          \Mail::send('emails.technicians', compact('technicians', 'job', 'candidate', 'job_quizz', 'assignement'), function($message) use ($technicians, $job, $candidate, $job_quizz, $assignement)
+                            {
+                                $message->to($technicians->email)->subject(\Lang::get('messages.assignement'));
+                            });
+                        }
+                        $nn = 0;    
+                        foreach ($maxiArr as $key){// => $value) {
+                            if( $key['quizz_id'] == $job_quizz->id ) {
+                                $techQuizzes[$mm] = $key;
+                                $mm++; 
+                                unset($maxiArr[$nn]);
+                            }   
+                            $nn++;
+                        }
+
+                        break;
                     }
                 }
 
                 if($send){
-                    foreach($job_quizz->category->users as $technicians) {
-                      \Mail::send('emails.technicians', compact('technicians'), function($message) use ($technicians)
-                        {
-							$message->to($technicians->email)->subject(\Lang::get('messages.assignement'));
-                        });
-                    }
+                    /*
+                    La tehnici per quiz
+                    */
+
+                    $maxi = ['maxi' => $maxiArr];
+                    $techQ = ['techQ' => $techQuizzes];
+                    foreach($users as $user){
+                        if($user->user_type_id == 3 && in_array($user->id, $officers)){ // HR Officer
+                            \Mail::send('emails.hr_officer', compact('user', 'job', 'candidate', 'maxi', 'techQ'), function($message) use ($user, $job, $candidate)
+                            {
+                                $message->to($user->email)->subject(\Lang::get('messages.tests'));
+                            });
+/*                        } elseif($user->user_type_id == 2 && in_array($user->id, $officers)){ // HR Manager
+
+                            \Mail::send('emails.manager', compact('user', 'job'), function($message) use ($user, $job)
+                            {
+                                $message->to($user->email)->subject(\Lang::get('messages.tests'));
+                            });
+                        } elseif($user->user_type_id == 8 && in_array($user->id, $officers)){ // HR Team Leader
+
+                            \Mail::send('emails.hr_team_leader', compact('user', 'job'), function($message) use ($user, $job)
+                            {
+                                $message->to($user->email)->subject(\Lang::get('messages.tests'));
+                            });
+*/                            
+                        } else {
+                            continue;
+                        }
+                    }       
                 }
 	        }
 		}
 
 
-        $emails = explode(';', $job->notified);
-        if(!empty($emails) && $emails[0] != '') {
-            foreach($emails as $notify){
-                //$user = Auth::user();
-				\Mail::send('emails.notifiers', compact('candidate', 'job'), function($message) use ($candidate, $job, $notify)
-				{
-					$message->to($notify)->subject(\Lang::get('messages.tests'));
-				});
-            }
-        }
-
         if($full || !$sendFull) {
-
-            $officers = [];
-            foreach($job->officers as $officer){
-                $officers[] = $officer->id;
+            $maxi = ['maxi' => $maxiArr];
+            $emails = explode(';', $job->notified);
+            if(!empty($emails) && $emails[0] != '') {
+                foreach($emails as $notify){
+                    //$user = Auth::user();
+                    \Mail::send('emails.notifiers', compact('candidate', 'job', 'maxi'), function($message) use ($candidate, $job, $notify)
+                    {
+                        $message->to($notify)->subject(\Lang::get('messages.tests'));
+                    });
+                }
+            }
+            foreach($users as $user){
+                if($user->user_type_id == 3 && in_array($user->id, $officers)){ // HR Officer
+                    \Mail::send('emails.hr_officer_full', compact('user', 'job', 'candidate', 'maxi'), function($message) use ($user, $job, $candidate)
+                    {
+                        $message->to($user->email)->subject(\Lang::get('messages.tests'));
+                    });
+                } else {
+                    continue;
+                }
             }
 
-            foreach($users as $user){
+/*            foreach($users as $user){
 
-                if($user->user_type_id == 3 && in_array($user->id, $officers)){
+                if($user->user_type_id == 3 && in_array($user->id, $officers)){ // HR Officer
                     \Mail::send('emails.hr_officer', compact('user', 'job'), function($message) use ($user, $job)
                     {
                         $message->to($user->email)->subject(\Lang::get('messages.tests'));
                     });
-                } elseif($user->user_type_id == 2 && in_array($user->id, $officers)){
+                } elseif($user->user_type_id == 2 && in_array($user->id, $officers)){ // HR Manager
                     \Mail::send('emails.manager', compact('user', 'job'), function($message) use ($user, $job)
                     {
                         $message->to($user->email)->subject(\Lang::get('messages.tests'));
                     });
-                } elseif($user->user_type_id == 8 && in_array($user->id, $officers)){
+                } elseif($user->user_type_id == 8 && in_array($user->id, $officers)){ // HR Team Leader
 					\Mail::send('emails.hr_team_leader', compact('user', 'job'), function($message) use ($user, $job)
 					{
 						$message->to($user->email)->subject(\Lang::get('messages.tests'));
@@ -381,8 +438,35 @@ class TestController extends Controller {
                 	continue;
                 }
             }
+*/
+
         }
     }
+
+
+
+    private static function maxiScore($assignement){
+        
+        $job = $assignement->job;
+        $maxiScore = array(); 
+        $ii = 0;
+        foreach ($job->quizzes as $job_quizz) {
+
+            $tquestions = 0;
+            $tpoints = 0;
+            foreach($job_quizz->questions as $qQuestion){
+                $tquestions++; 
+                $tpoints += $qQuestion->points; 
+            }
+            $user_quizz = User_quiz::where('assignement_id', $assignement->id)->where('quiz_id', $job_quizz->id)->first();
+            $maxiScore[$ii] = array("job_id" => $job->id, "job_title" => $job->title, "quizz_id" => $job_quizz->id, "quizz_name" => $job_quizz->name, "rate" => round($user_quizz->mark*100/$tpoints, 1));
+            $ii++;
+        }   
+        return $maxiScore;
+
+    }
+
+
 
     /**
      * Show the form for creating a new resource.

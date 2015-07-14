@@ -256,8 +256,11 @@ class AjaxController extends Controller {
 			} else {
 				/* Populate */
 				$row->jobTitle = $row->job->title;
-				$row->period = explode(' ', $row->job->start_at)[0].'-'.explode(' ', $row->job->end_at)[0];
+				$row->period = explode(' ', $row->job->start_at)[0].' - '.explode(' ', $row->job->end_at)[0];
 				$row->jobQuizzes = view('ajax/assignments_quizzes', compact('row', 'user', 'uCat'))->render();
+
+				$row->actions = view('ajax/quiz_assignment_action', compact('row', 'quiz', 'user', 'uCat'))->render();//jobs_assignment_action', compact('row', 'user', 'uCat'))->render();
+
 			}
 		}
 //		die();
@@ -334,11 +337,11 @@ class AjaxController extends Controller {
 						$row->quizShow = '<a href="'.url('results/'.$quiz->user_id.'/'.$row->id.'/'.$quiz->quiz_id).'">'.\Lang::get($quiz->quiz->name).'</a><br>';
 
 
-						if(in_array(16, $this->privsArray)) {
-							$row->actions = view('ajax/quiz_assignment_action', compact('row', 'quiz', 'user', 'uCat'))->render();;
-						} else {							
-							$row->actions = '';
-						}
+						// if(in_array(16, $this->privsArray)) {
+						// 	$row->actions = view('ajax/quiz_assignment_action', compact('row', 'quiz', 'user', 'uCat'))->render();
+						// } else {							
+						// 	$row->actions = '';
+						// }
 
 					    $i++;
 					}

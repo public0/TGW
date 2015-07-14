@@ -20,6 +20,9 @@ class AssignementController extends Controller {
 	 */
 	public function index(Request $request)
 	{   
+		if(!in_array(14, $this->privsArray)) {			
+			return redirect('/');
+		}
 		$search = $request->all();
 		$assignements = NULL;
 		$score = [];

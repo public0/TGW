@@ -21,7 +21,7 @@
 					            <th class="text-center col-md-2">{{ Lang::get('messages.pass_score') }}</th>
 					            <th class="text-center">{{ Lang::get('messages.score') }}</th>
 					            <th class="text-left">{{ Lang::get('messages.quizzes') }}</th>
-					            <th class="text-center">{{ Lang::get('messages.actions') }}</th>
+					            <!-- <th class="text-center">{{ Lang::get('messages.actions') }}</th> -->
 					        </tr>
 					    </thead>
 					</table>

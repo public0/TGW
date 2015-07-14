@@ -24,7 +24,8 @@ abstract class Controller extends BaseController {
 			/*
 				Overall User privileges
 			*/
-			switch ($loggedUser->user_type_id) {
+
+/*			switch ($loggedUser->user_type_id) {
 				case 1:
 					break;
 				case 2:
@@ -37,13 +38,11 @@ abstract class Controller extends BaseController {
 					break;
 				case 6:
 					$defaultAllowed = [
-						'test',						
+						'test',
 					];
-
 					$segments = explode('/', Route::current()->getUri());
 
 					if (!in_array($segments[0], $defaultAllowed)) {
-						return redirect('test/score');		
 					}
 					break;
 				case 7:
@@ -52,6 +51,7 @@ abstract class Controller extends BaseController {
 					break;
 				
 			}
+*/
 		}
 	}
 }

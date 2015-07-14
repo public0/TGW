@@ -1,5 +1,5 @@
-<p>Hello, </p>
-<p>The test(s) for the position of <b>{{ $job->title }}</b> has been finished by {{$candidate->name}} {{ $candidate->surname }} and the final score is available in Testing GW.</p>
+<p>Hello, {{$user->name}} {{ $user->surname }}</p>
+<p>The test(s) for the position of <b>{{ $job->title }}</b> has been finished by {{$candidate->name}} {{ $candidate->surname }} and the results are:</p>
 <p>
 <?php 
 foreach($maxi as $max) {
