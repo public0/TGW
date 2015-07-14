@@ -289,7 +289,7 @@ class AjaxController extends Controller {
 				if(isset($row->quizzes) && !$row->quizzes->isEmpty()) {
 					foreach ($row->quizzes as $quiz) {
 						if($quiz->quiz->score) {
-							$score[$quiz->id] = $quiz->score;
+							$score[$quiz->id] = $quiz->quiz->score;
 						} else {
 							$score[$quiz->id] = 0;
 							foreach($quiz->quiz->questions as $question) {

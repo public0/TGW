@@ -6,6 +6,7 @@ class Job extends Model {
 
 	protected $fillable = [
 		'title',
+		'user_id',
 		'candidates',
 		'description',
 		'status',

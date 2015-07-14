@@ -2,7 +2,7 @@
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use Auth;
 use Illuminate\Http\Request;
 use Validator;
 use App\Job;
@@ -80,6 +80,7 @@ class JobController extends Controller {
 		]);
 
 		$input = $request->all();
+		$input['user_id'] = Auth::user()->id;
 		$newJob = Job::create($input);
 		if(!empty($input['job_officer'])) {
 			$newJob->officers()->attach($input['job_officer']);
