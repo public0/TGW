@@ -4,6 +4,7 @@ use Illuminate\Foundation\Bus\DispatchesCommands;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Auth;
+use Route;
 
 abstract class Controller extends BaseController {
 
@@ -17,6 +18,39 @@ abstract class Controller extends BaseController {
 
 			foreach ($privs as $priv) {
 				$this->privsArray[] = $priv->id;
+			}
+
+			$defaultAllowed = [];
+			/*
+				Overall User privileges
+			*/
+			switch ($loggedUser->user_type_id) {
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+				case 5:
+					break;
+				case 6:
+					$defaultAllowed = [
+						'test',						
+					];
+
+					$segments = explode('/', Route::current()->getUri());
+
+					if (!in_array($segments[0], $defaultAllowed)) {
+						return redirect('test/score');		
+					}
+					break;
+				case 7:
+					break;
+				case 8:
+					break;
+				
 			}
 		}
 	}
