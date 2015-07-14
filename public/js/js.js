@@ -145,7 +145,7 @@ $(function() {
 	$('#assignment_table').dataTable({
 		'ajax': 'ajax/get_assignments',
 		'columnDefs' : [
-			{className: 'text-center', "targets": [ 0, 1]}
+			{className: 'text-center', "targets": [ 0, 1, 2, 3]}
 		],
 //		"processing": true,
 //        "serverSide": true,
