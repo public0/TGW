@@ -101,7 +101,9 @@ class UserController extends Controller {
 
 					} elseif (in_array($privilege->privilege, ['Assignments', 'Jobs'])) {
 						$privilegesArray[] = $privilege->id;
-					}
+             	    } elseif (in_array($privilege->privilege,['Categories'])){
+                        $privilegesArray[] = $privilege->id;
+             	    }
 				}
 				break;
 			case 3: /* HR Officer */
@@ -143,7 +145,9 @@ class UserController extends Controller {
                    $privilegesArray[] = $privilege->id;
              	} elseif (in_array($privilege->privilege,['Assignments']) &&  $privilege->type !='u'){
                     $privilegesArray[] = $privilege->id;
-         	    }             	     
+         	    } elseif (in_array($privilege->privilege,['Categories'])){
+                    $privilegesArray[] = $privilege->id;
+         	    }
              }
 			break;
 

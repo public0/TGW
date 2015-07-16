@@ -5,7 +5,7 @@
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
-				<div class="panel-heading">{{ Lang::get('links.new_user') }}</div>
+				<div class="panel-heading">{{ Lang::get('links.edit_user') }}  - {{ $user->name }} {{ $user->surname }}</div>
 				<div class="panel-body">
 				{!! Form::open(['url' => 'user/update/'.$user->id, 'method' => 'POST']) !!}
 				<div class="form-group">

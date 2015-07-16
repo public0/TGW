@@ -124,7 +124,7 @@ $(function() {
 				{'data' : 'goal'},
 				{'data' : 'score'},
 				{'data' : 'quizShow'},
-				//{'data' : 'actions'},
+				{'data' : 'actions'},
 			],
 	});
 
@@ -145,7 +145,7 @@ $(function() {
 	$('#assignment_table').dataTable({
 		'ajax': 'ajax/get_assignments',
 		'columnDefs' : [
-			{className: 'text-center', "targets": [ 0, 1, 2, 3]}
+			{className: 'text-center', "targets": [ 0, 1, 2]}
 		],
 //		"processing": true,
 //        "serverSide": true,
@@ -154,7 +154,7 @@ $(function() {
 			{'data' : 'jobTitle'},
 			{'data' : 'period'},
 			{'data' : 'jobQuizzes'},
-			{'data' : 'actions'},
+//			{'data' : 'actions'},
 		],
 	});
 

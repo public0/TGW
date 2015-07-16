@@ -4,7 +4,7 @@
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
-				<div class="panel-heading">{{ Lang::get('links.edit_job') }}</div>
+				<div class="panel-heading">{{ Lang::get('links.edit_job') }} - {{ $job->title }}</div>
 				<div class="panel-body">
 				{!! Form::open(['url' => 'job/update/'.$id, 'method' => 'POST']) !!}
 				<div class="form-group">

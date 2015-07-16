@@ -163,7 +163,8 @@ class QuizController extends Controller {
 		$quiz->intro = $input['intro'];
 		$quiz->show_intro = $input['show_intro'];
 		$quiz->save();
-		return redirect()->back();
+		//return redirect()->back();
+		return redirect('quizzes');
 	}
 
 	/**

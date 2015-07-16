@@ -5,7 +5,7 @@
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
-				<div class="panel-heading">{{ Lang::get('links.new_category') }}</div>
+				<div class="panel-heading">{{ Lang::get('links.new_category') }} - {{ $category->name }}</div>
 				<div class="panel-body">
 				{!! Form::open(['url' => 'categories/update/'.$category->id]) !!}
 				<div class="form-group">

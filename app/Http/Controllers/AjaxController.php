@@ -187,7 +187,7 @@ class AjaxController extends Controller {
 	*/
 	public function getUsers() {
 		$data = new \stdClass;
-		$data->data = User::all();
+		$data->data = User::where('user_type_id', '!=', 1)->get();
 		foreach($data->data as $row) {
 			$row->uType = $row->type->type;
 			$row->fullName = $row->name.' '.$row->surname;
@@ -259,8 +259,9 @@ class AjaxController extends Controller {
 				$row->period = explode(' ', $row->job->start_at)[0].' - '.explode(' ', $row->job->end_at)[0];
 				$row->jobQuizzes = view('ajax/assignments_quizzes', compact('row', 'user', 'uCat'))->render();
 
-				$row->actions = view('ajax/quiz_assignment_action', compact('row', 'quiz', 'user', 'uCat'))->render();//jobs_assignment_action', compact('row', 'user', 'uCat'))->render();
-
+			//  //jobs_assignments	
+			//	$row->actions = view('ajax/quiz_assignment_action', compact('row', 'quiz', 'user', 'uCat'))->render();//jobs_assignment_action', compact('row', 'user', 'uCat'))->render();
+			//  //jobs_assignments
 			}
 		}
 //		die();
@@ -336,14 +337,16 @@ class AjaxController extends Controller {
 
 						$row->quizShow = '<a href="'.url('results/'.$quiz->user_id.'/'.$row->id.'/'.$quiz->quiz_id).'">'.\Lang::get($quiz->quiz->name).'</a><br>';
 
+					//  quiz_assignments
 
-						// if(in_array(16, $this->privsArray)) {
-						// 	$row->actions = view('ajax/quiz_assignment_action', compact('row', 'quiz', 'user', 'uCat'))->render();
-						// } else {							
-						// 	$row->actions = '';
-						// }
+						if(in_array(16, $this->privsArray)) {
+							$row->actions = view('ajax/quiz_assignment_action', compact('row', 'quiz', 'user', 'uCat'))->render();
+						} else {							
+							$row->actions = '';
+						}
 
 					    $i++;
+					//  quiz_assignments
 					}
 				} else {
 					/* Assignment to a job with on quizzes*/

@@ -178,7 +178,8 @@ class JobController extends Controller {
 			$job->officers()->attach($input['job_officer']);
 		}
 
-		return redirect()->back();
+//		return redirect()->back();
+		return redirect('jobs');
 
 	}
 

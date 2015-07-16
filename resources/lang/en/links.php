@@ -5,14 +5,18 @@ return [
     'quiz' => 'Quizzes',
     'show_quiz' => 'Show Quizzes',
     'new_quiz' => 'New Quiz',
+    'edit_quiz' => 'Edit Quiz',
 
     'users' => 'Users',
     'show_users' => 'Show Users',
     'new_user' => 'New User',
+    'edit_user' => 'Edit User',
 
     'assignements' => 'Assignments',
     'show_assignements' => 'Show Assignments',
     'new_assignement' => 'New Assignment',
+    'show_assignements_jobs' => 'Show Assignments / Jobs',
+    'show_assignements_quizzes' => 'Show Assignments / Quizzes',
  
     'categories' => 'Categories',
     'show_categories' => 'Show Categories',

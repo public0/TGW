@@ -63,7 +63,7 @@ class AssignementController extends Controller {
 		if(!in_array(14, $this->privsArray)) {			
 			return redirect()->back();
 		}
-			return view('assignement.jobs_assignements', compact('assignements','score', 'search', 'user', 'uCat'));
+		return view('assignement.jobs_assignements', compact('assignements','score', 'search', 'user', 'uCat'));
 	}
 
 	public function quiz_assignements($aid, $qid, Request $request) {
@@ -228,10 +228,19 @@ class AssignementController extends Controller {
 	{
 		if(!in_array(16, $this->privsArray))
 			return redirect()->back();
+		
 		$given_answers = Given_answers::where('assignement_id', $aid)->where('quiz_id', $qid);
 		$assignement = Assignement::find($aid);
 		$given_answers->delete();
-		$assignement = Assignement::find($aid)->delete();
+
+		$user_quiz = User_quiz::where('assignement_id', $aid)->where('quiz_id', $qid);
+		$user_quiz->delete();
+		$user_quiz_no = 0;
+		$user_quiz_no = User_quiz::where('assignement_id', $aid)->count();
+
+		if($user_quiz_no == 0) {
+			$assignement = Assignement::find($aid)->delete();
+		}
 		return redirect()->back();
 	}
 

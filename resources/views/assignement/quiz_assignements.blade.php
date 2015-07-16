@@ -6,7 +6,7 @@
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-				<h4 class="pull-left"><h4 class="pull-left">{{ Lang::get('links.show_assignements') }}</h4>
+				<h4 class="pull-left"><h4 class="pull-left">{{ Lang::get('links.show_assignements_quizzes') }}</h4>
 				<br>
 				<br>
 				</div>
@@ -21,7 +21,7 @@
 					            <th class="text-center col-md-2">{{ Lang::get('messages.pass_score') }}</th>
 					            <th class="text-center">{{ Lang::get('messages.score') }}</th>
 					            <th class="text-left">{{ Lang::get('messages.quizzes') }}</th>
-					            <!-- <th class="text-center">{{ Lang::get('messages.actions') }}</th> -->
+					            <th class="text-center">{{ Lang::get('messages.actions') }}</th>
 					        </tr>
 					    </thead>
 					</table>

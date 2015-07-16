@@ -11,7 +11,7 @@ if(!in_array(27, $privsArray)) {
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
-				<div class="panel-heading">{{ Lang::get('messages.privileges') }} <span class="selectAll">{{ Lang::get('messages.select_all') }} {!! Form::checkbox('permission',1,true,['class' => 'select'])!!}</span></div>
+				<div class="panel-heading">{{ Lang::get('messages.privileges') }} - {{ $user->name }} {{ $user->surname }} <span class="selectAll">{{ Lang::get('messages.select_all') }} {!! Form::checkbox('permission',1,true,['class' => 'select'])!!}</span></div>
 				<div class="panel-body">
 					<table class="table table-striped">
 					    <thead>

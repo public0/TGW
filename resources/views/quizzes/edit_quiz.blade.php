@@ -5,7 +5,7 @@
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
-				<div class="panel-heading">{{ Lang::get('links.new_quiz') }}</div>
+				<div class="panel-heading">{{ Lang::get('links.edit_quiz') }} - {{ $quiz->name }}</div>
 				<div class="panel-body">
 				{!! Form::open(['url' => 'quizz/update/'.$quiz->id]) !!}
 				<div class="form-group">
