@@ -61,7 +61,7 @@
                                  		 <td>
                                  		    
                                  	 		<span class="label label-default">
-					    					{{Lang::get('messages.answer')}} {{$z}}:&nbsp;&nbsp;
+					    					{{Lang::get('messages.exp_answer')}} :&nbsp;&nbsp;
 					    					</span> &nbsp; {{$answer->answer}}
                                  		 </td>
                                  	@endif

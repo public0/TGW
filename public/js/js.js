@@ -406,7 +406,7 @@ $(function() {
 		    case 3: {
 		    	answer_counter = -1;
 		    	$('#answers').empty();
-		    	$('#answers').html('<label>Answer</label>\
+		    	$('#answers').html('<label>Expected Answer</label>\
 		    		<div id="dynamic_multi">\
 		    		<textarea class="form-control" name="single_text"></textarea>\
 		    		</div>\

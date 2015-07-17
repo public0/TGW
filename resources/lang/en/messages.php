@@ -98,4 +98,5 @@ return [
     'new_user' => 'New User',
     'short_number' => 'No.',
     'long_number' => 'Number',
+    'exp_answer' => 'Expected Answer'
 ];
