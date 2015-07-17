@@ -187,7 +187,7 @@ class AjaxController extends Controller {
 	*/
 	public function getUsers() {
 		$data = new \stdClass;
-		$data->data = User::where('user_type_id', '!=', 1)->get();
+		$data->data = User::all();
 		foreach($data->data as $row) {
 			$row->uType = $row->type->type;
 			$row->fullName = $row->name.' '.$row->surname;
