@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 
 //use Illuminate\Http\Request;
 
+use App\Quiz;
 use Request;
 use App\Question;
 use App\Answer;
@@ -257,7 +258,7 @@ class QuestionController extends Controller {
 		foreach ($quiz as $row){ 
         	$quizId = $row['id'];
         }
-		$parentQuiz = Quiz::where('id', '=', $quiz_id)->first();
+		$parentQuiz = Quiz::where('id', '=', $quizId)->first();
 		$sum = $parentQuiz->questionsPoints;
 		foreach ($sum as $row){ 
         	$sumAll = $row['sum'];
@@ -323,9 +324,9 @@ class QuestionController extends Controller {
 
 		$quiz = $question->quiz;
 		foreach ($quiz as $row){ 
-        	$quiz_id = $row['id'];
+        	$quizId = $row['id'];
         }
-		$parentQuiz = Quiz::where('id', '=', $quiz_id)->first();
+		$parentQuiz = Quiz::where('id', '=', $quizId)->first();
 		$sum = $parentQuiz->questionsPoints;
 		foreach ($sum as $row){ 
         	$sumAll = $row['sum'];

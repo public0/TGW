@@ -15,6 +15,7 @@
 					<table id="quiz_questions_table" class="table table-striped">
 					    <thead>
 					        <tr>
+					            <th>{{ Lang::get('messages.short_number') }}</th>
 					            <th>{{ Lang::get('messages.question') }}</th>
 					            <th>{{ Lang::get('messages.type') }}</th>
 					            <th>{{ Lang::get('messages.points') }}</th>
@@ -22,8 +23,13 @@
 					        </tr>
 					    </thead>
 					    <tbody>
+					    <?php $total = 0; ?>
+					    <?php $ii = 0; ?>
 							@foreach ($quiz->questions as $question)
+							<?php $ii++; ?>
+							<?php $total += $question->points; ?>
 							    <tr>
+							    	<td>{!! $ii !!}</td>
 							    	<td>{!! $question->question !!}</td>
 							    	<td>{{ $question->question_type->type }}</td>
 							    	<td>{{ $question->points }}</td>
@@ -48,6 +54,15 @@
 							    </tr>
 							@endforeach
 					    </tbody>
+					    <tfoot>
+					        <tr>
+					            <th>{{ '' }}</th>
+					            <th>{{ '' }}</th>
+					            <th>{{ '' }}</th>
+					            <th>{{ 'Total: '.$total }}</th>
+					            <th>{{ '' }}</th>
+					        </tr>
+					    </tfoot> <!-- -->
 					</table>
 				</div>
 			</div>
