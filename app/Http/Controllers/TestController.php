@@ -31,7 +31,7 @@ class TestController extends Controller {
         $assignement = Assignement::where('assigned_user', Auth::user()->id)->where('status', 0)->first();
 
         if(!$assignement) {
-        	return redirect('test/score');
+            return redirect('test/score');
         }
         if(!$assignement->job->status) {
             return redirect('test/score');
@@ -95,7 +95,7 @@ class TestController extends Controller {
         TO DO: Create private function send emails params: obj jobs, array emails, obj users
         */
 
-			return redirect('test/score');
+            return redirect('test/score');
         }
 
         $quizzes = $assignement->job->quizzes;
@@ -134,6 +134,7 @@ class TestController extends Controller {
         $currentQuiz = Quiz::find($input['quiz']);
         $eval = [];
         if(isset($input['question'])) {
+            $has_freetext = FALSE;
             foreach ($currentQuiz->questions as $question) {
                 if(array_key_exists($question->id, $input['question'])) {
                     $correctAnswers = $question->correctAnswers->toArray();
@@ -148,6 +149,7 @@ class TestController extends Controller {
                     */
 
                     if($question->question_type_id == 3) {
+                        $has_freetext = TRUE;
                         $given_answer = new Given_answers;
                         $given_answer->assignement_id = $assignement->id;
                         $given_answer->question_id = $question->id;
@@ -213,6 +215,9 @@ class TestController extends Controller {
 
         $user_quizz->done = 1;
         $user_quizz->mark = $final_mark;
+        if(!$has_freetext){
+            $user_quizz->final = 1;
+        }
         $user_quizz->save();
         \Session::put('submitted', true);
 
@@ -239,12 +244,13 @@ class TestController extends Controller {
             $input = $request->all();
 
             $user_quiz->reason = $input['reason'];
+            $user_quiz->final = 1;
             $user_quiz->save();
 
             $assignement = Assignement::where('id', $aid)->where('status', 1)->first();
             $job = $assignement->job;
 
-            $users = User::whereIn('user_type_id', [3,4,6,8])->orderBy('id', 'ASC')->get();
+            $users = User::whereIn('user_type_id', [3,4,6,8])->where('status', 1)->orderBy('id', 'ASC')->get();
             $emails = explode(';', $job->notified);
 
             $user = User::find($uid);
@@ -324,12 +330,12 @@ class TestController extends Controller {
         foreach($job->officers as $officer){
             $officers[] = $officer->id;
         }
-		if(!$full) {
-	        $sendFull = FALSE;
+        if(!$full) {
+            $sendFull = FALSE;
 
             $techQuizzes = array();
             $mm = 0;
-	        foreach ($job->quizzes as $job_quizz) {
+            foreach ($job->quizzes as $job_quizz) {
                 $send = FALSE;
 
                 foreach($job_quizz->questions as $qQuestion){
@@ -390,8 +396,8 @@ class TestController extends Controller {
                         }
                     }       
                 }
-	        }
-		}
+            }
+        }
 
 
         if($full || !$sendFull) {
@@ -430,12 +436,12 @@ class TestController extends Controller {
                         $message->to($user->email)->subject(\Lang::get('messages.tests'));
                     });
                 } elseif($user->user_type_id == 8 && in_array($user->id, $officers)){ // HR Team Leader
-					\Mail::send('emails.hr_team_leader', compact('user', 'job'), function($message) use ($user, $job)
-					{
-						$message->to($user->email)->subject(\Lang::get('messages.tests'));
-					});
+                    \Mail::send('emails.hr_team_leader', compact('user', 'job'), function($message) use ($user, $job)
+                    {
+                        $message->to($user->email)->subject(\Lang::get('messages.tests'));
+                    });
                 } else {
-                	continue;
+                    continue;
                 }
             }
 */

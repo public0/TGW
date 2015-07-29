@@ -15,6 +15,7 @@ class Quiz extends Model {
 		'score_senior',
 		'score',
 		'show_intro',
+		'status',
 		'intro',
 		'from',
 		'to'

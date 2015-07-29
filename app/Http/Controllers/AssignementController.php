@@ -82,16 +82,27 @@ class AssignementController extends Controller {
 	{  
 		if(!in_array(13, $this->privsArray))
 			return redirect()->back();
-		$jobs = [ 0 => \Lang::get('messages.select')];
+		//$jobs = [ 0 => \Lang::get('messages.select')];
 
  		$yesterday = \Carbon\Carbon::now()->subDay()->toDateTimeString(); 
-
- 		$date = \Carbon\Carbon::now()->toDateTimeString(); 
-		$jobs += Job::where('status', '1')
+        $date = \Carbon\Carbon::now()->toDateTimeString(); 
+	    //$jobs += Job::where('status', '1')
+		//->where('start_at','<',$date)
+		//->where('end_at','>',$yesterday)
+		//->lists('title', 'id');
+		$jobb = Job::where('status', '1')
 		->where('start_at','<',$date)
-		->where('end_at','>',$yesterday)
-		->lists('title', 'id');
-		$users = User::select(\DB::raw("CONCAT(name, ' ', surname) AS full_name, id"))->where('user_type_id',6)->lists('full_name', 'id');
+		->where('end_at','>',$yesterday)->get();
+		$jobs['0'] = \Lang::get('messages.select');
+		foreach ($jobb as $jobss) {
+			$countJobs = Assignement::where('assigned_job', $jobss->id)->count() ; 
+        
+			if($countJobs < $jobss->candidates){
+              $jobs[$jobss->id] = $jobss->title ;
+			}
+	       
+		}
+		$users = User::select(\DB::raw("CONCAT(name, ' ', surname) AS full_name, id"))->where('user_type_id',6)->where('status', 1)->lists('full_name', 'id');
 
 		return view('assignement.new_assignement', compact('jobs', 'users'));
 	}

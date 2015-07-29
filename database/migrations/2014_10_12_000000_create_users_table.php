@@ -25,7 +25,9 @@ class CreateUsersTable extends Migration {
 /*			$table->string('email')->unique();*/
 			$table->string('password', 60);
 			$table->boolean('assigned')->default(0);
+			$table->boolean('status')->default(1);
 			$table->rememberToken();
+			$table->timestamp('last_pass_change');
 			$table->timestamps();
 		});
 

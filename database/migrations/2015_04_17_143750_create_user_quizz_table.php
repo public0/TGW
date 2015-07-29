@@ -23,6 +23,7 @@ class CreateUserQuizzTable extends Migration {
 
 			$table->integer('mark')->unsigned();
 			$table->boolean('done')->defaul(0);
+            $table->boolean('final')->defaul(0);
 
 			$table->string('reason');
 			$table->timestamps();

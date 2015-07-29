@@ -17,6 +17,7 @@
 					            <th class="text-center">{{ Lang::get('messages.name') }}</th>
 					            <th class="text-center">{{ Lang::get('messages.date') }}</th>
 					            <th class="text-center">{{ Lang::get('messages.questions') }}</th>
+					             <th class="text-center">{{ Lang::get('messages.status') }}</th>
 					            <th class="text-center">{{ Lang::get('messages.actions') }}</th>
 					        </tr>
 					    </thead>

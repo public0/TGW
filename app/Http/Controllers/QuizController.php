@@ -2,7 +2,7 @@
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use \Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 //use Request;
 use App\Quiz;
@@ -54,6 +54,25 @@ class QuizController extends Controller {
 		$categories = [ 0 => \Lang::get('messages.select')];
 		$categories += Category::lists('name','id');
 		$user = Auth::user()->id;
+
+		$user_type_id = Auth::user()->user_type_id;
+		if($user_type_id == 4){
+			$uUnCat = [];
+			$uUnCat = DB::table('category_user')
+						->where('user_id','=',$user)
+	                    ->lists('category_id');
+	        foreach ($categories as $key=>$value) {
+				$del = TRUE;
+				foreach ($uUnCat as $val) {
+					if($key == $val){
+						$del = FALSE;
+					}
+				}
+				if ($del) {
+				    unset($categories[$key]);
+				}
+			}   
+		}
 		return view('quizzes.new_quiz', compact('categories','user'));
 	}
 
@@ -77,7 +96,7 @@ class QuizController extends Controller {
 		$input['score_mid'] = (int)$input['score_mid'];
 		$input['score_senior'] = (int)$input['score_senior'];
 		$input['user_id'] = (int)Auth::user()->id;
-
+        $input['status'] = 0;
 		if($input['category_id'] == 1) {
 			$this->validate($request, [
 			        'from' => 'required',
@@ -110,6 +129,27 @@ class QuizController extends Controller {
 		if(!in_array(7, $this->privsArray))
 			return redirect()->back();
 		$categories = Category::lists('name','id');
+
+		$user_type_id = Auth::user()->user_type_id;
+		if($user_type_id == 4){
+			$user = Auth::user()->id;
+			$uUnCat = [];
+			$uUnCat = DB::table('category_user')
+						->where('user_id','=',$user)
+	                    ->lists('category_id');
+	        foreach ($categories as $key=>$value) {
+				$del = TRUE;
+				foreach ($uUnCat as $val) {
+					if($key == $val){
+						$del = FALSE;
+					}
+				}
+				if ($del) {
+				    unset($categories[$key]);
+				}
+			}            
+
+		}
 		$quiz = Quiz::find($id);
 		$jj = $quiz->juniorQuestionsPoints()->get()->toArray();
 		$jm = $quiz->midQuestionsPoints()->get()->toArray();
@@ -166,7 +206,17 @@ class QuizController extends Controller {
 		//return redirect()->back();
 		return redirect('quizzes');
 	}
+    public function statusQuiz($id, $quizstat)
+	{
+		
+      
+		$quiz = Quiz::find($id);
+		$quiz->status = $quizstat;
+		$quiz->save();
+		
 
+		return redirect('quizzes');		
+	}
 	/**
 	 * Remove the specified resource from storage.
 	 *

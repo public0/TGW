@@ -17,7 +17,7 @@
 					            <th class="text-center">{{ Lang::get('messages.job') }}</th>
 					            <th class="text-center">{{ Lang::get('messages.period') }}</th>
 					            <th class="text-left">{{ Lang::get('messages.quizzes') }}</th>
-					            <th class="text-center">{{ Lang::get('messages.actions') }}</th>
+					            <!--<th class="text-center">{{ Lang::get('messages.actions') }}</th>-->
 					        </tr>
 					    </thead>
 					</table>

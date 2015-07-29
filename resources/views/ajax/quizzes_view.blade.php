@@ -6,7 +6,7 @@
 		</form>
 	</li>
 	@endif
-	@if( !$quizJobs)
+	@if( !$quizJobs )
 		@if(in_array(8, $privsArray))
 		<li>
 			<form method="GET" action="{{\URL::to('/')}}/quizz/delete/{{$row->id}}" accept-charset="UTF-8" class="confirm">

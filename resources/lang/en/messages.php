@@ -78,7 +78,7 @@ return [
     'score' => 'Score',
     'pass_score' => 'Goal',
     'start_at' => 'Starts from',
-    'started_at' => 'Started at',
+    'started_at' => 'Started&nbsp;at',
     'end_at' => 'Ends At',
     'period' => 'Period',
     'start' => 'Start',
@@ -98,5 +98,13 @@ return [
     'new_user' => 'New User',
     'short_number' => 'No.',
     'long_number' => 'Number',
-    'exp_answer' => 'Expected Answer'
+    'active' => 'Active',
+    'inactive' => 'Inactive',
+    'activate' => 'Activate',
+    'dezactivate' => 'Deactivate',
+    'exp_answer' => 'Expected Answer',
+    'submit' => 'Submit',
+    'change_password' => 'Change Password',
+    'new_password' => 'New Password',
+    'gata' => 'Score&nbsp;Status',
 ];

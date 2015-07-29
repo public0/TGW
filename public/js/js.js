@@ -111,22 +111,26 @@ $(function() {
 */
 
 	$('#quiz_assignment_table').dataTable({
-			'ajax': base_url+'/ajax/get_assigned_quizzes/'+pathArray[pathArray.length - 1],
-			'columnDefs' : [
-				{className: 'text-center', "targets": [ 0, 1, 2, 3 ]}
-			],
-			"iDisplayLength" : 25,
-			'columns' : [
-				{'data' : 'jobTitle'},
-				{'data' : 'QuizTitle'},
-				{'data' : 'userName'},
-				{'data' : 'started_at'},
-				{'data' : 'goal'},
-				{'data' : 'score'},
-				{'data' : 'quizShow'},
-				{'data' : 'actions'},
-			],
-	});
+            //'ajax': base_url+'/ajax/get_assigned_quizzes/'+pathArray[pathArray.length-1],
+            // Show Assignments - Quizzes only for selected job
+            'ajax': base_url+'/ajax/get_assigned_quizzes/'+pathArray[pathArray.length-2]+'/'+pathArray[pathArray.length-1],
+            // Show Assignments - Quizzes only for selected job
+            'columnDefs' : [
+                {className: 'text-center', "targets": [ 0, 1, 2, 3 ]}
+            ],
+            "iDisplayLength" : 25,
+            'columns' : [
+                {'data' : 'jobTitle'},
+                {'data' : 'QuizTitle'},
+                {'data' : 'userName'},
+                {'data' : 'started_at'},
+                {'data' : 'goal'},
+                {'data' : 'score'},
+                {'data' : 'gata'}, // gata
+                {'data' : 'quizShow'},
+                {'data' : 'actions'},
+            ],
+    });
 
 
 /*	$('#assignment_table').dataTable({
@@ -196,6 +200,7 @@ $(function() {
 			{'data' : 'name'},
 			{'data' : 'updated_at'},
 			{'data' : 'privileges'},
+			{'data' : 'status'},
 			{'data' : 'actions'}
 		],
 	});
@@ -217,17 +222,48 @@ $(function() {
 	$('#users_table').dataTable({
 		'ajax': 'ajax/get_users',
 		'columnDefs' : [
-			{className: 'text-center', "targets": [ 0, 1, 2, 3, 4 ]}
+			{className: 'text-center', "targets": [ 0, 1, 2, 3, 4]}
 		],
+		"oLanguage": {
+         "sSearch": "Global Search:"
+       },		
 		"iDisplayLength" : 25,
 		'columns' : [
 			{'data' : 'uType'},
 			{'data' : 'fullName'},
 			{'data' : 'login'},
 			{'data' : 'email'},
+			{'data' : 'status'},
 			{'data' : 'actions'}
 		],
 	});
+
+
+// USER SORT 
+	function filterColumn ( i ) {
+	    $('#users_table').DataTable().column( i ).search(
+	        $('#col'+i+'_filter').val(),
+	        $('#col'+i+'_regex').prop('checked'),
+	        $('#col'+i+'_smart').prop('checked')
+	    ).draw();
+	}
+
+    $('#users_table').dataTable();
+ 
+    $('input.global_filter').on( 'keyup click', function () {
+        filterGlobal();
+    } );
+ 	
+    $('input.column_filter').on( 'click', function (e) {
+    	return false;
+    } );
+
+    $('input.column_filter').on( 'keyup ', function (e) {
+    	e.preventDefault();
+        filterColumn( $(this).parents('th').attr('data-column') );
+    } );
+// USER SORT 
+
 
 	$('#new_intern_quiz').hide();
 	$('#category_id').change(function(){
@@ -384,29 +420,66 @@ $(function() {
 	    });
 		switch(val) {
 		    case 1: {
-		    	answer_counter = -1;
+		    	
 		    	$('#answers').empty();
+				answer_counter = 2;//-1;
+
 		    	$('#answers').html('<label>Answers</label>\
 		    		<span class="btn btn-default label label-success" id="add_multi">Add</span>\
 		    		<span class="btn btn-default label label-danger" id="sub_multi">Subtract</span>\
-		    		<div id="dynamic_multi"></div>\
+		    		<div id="dynamic_multi">\
+		    			<div id="multi_0" data-id="0">\
+							<input class="form-inline" placeholder="Answer" name="multi_text[]" type="text">\
+							<label for="multi_value[]">Correct</label>\
+							<input name="multi_value[0]" type="hidden" value="0">\
+							<input class="form-inline" name="multi_value[0]" type="checkbox" value="1">\
+						<br><br>\
+						</div>\
+						<div id="multi_1" data-id="1">\
+							<input class="form-inline" placeholder="Answer" name="multi_text[]" type="text">\
+							<label for="multi_value[]">Correct</label>\
+							<input name="multi_value[1]" type="hidden" value="0">\
+							<input class="form-inline" name="multi_value[1]" type="checkbox" value="1">\
+						<br><br>\
+						</div>\
+						<div id="multi_2" data-id="2">\
+							<input class="form-inline" placeholder="Answer" name="multi_text[]" type="text">\
+							<label for="multi_value[]">Correct</label>\
+							<input name="multi_value[2]" type="hidden" value="0">\
+							<input class="form-inline" name="multi_value[2]" type="checkbox" value="1">\
+						<br><br>\
+						</div>\
+					</div>\
 		    	');
 		        break;
 		    }
 		    case 2: {
-		    	answer_counter = -1;
+		    	answer_counter = 1;//-1;
 		    	$('#answers').empty();
 		    	$('#answers').html('<label>Answers</label>\
 		    		<span class="btn btn-default label label-success" id="add_single">Add</span>\
 		    		<span class="btn btn-default label label-danger" id="sub_single">Subtract</span>\
-		    		<div id="dynamic_multi"></div>\
+		    		<div id="dynamic_multi">\
+			    		<div data-id="0" id="single_0">\
+			    			<input type="text" name="single_text[]" placeholder="Answer" class="form-inline">\
+			    			<label for="single_value">Correct</label>\
+			    			<input type="radio" value="0" name="single_value" class="form-inline">\
+			    			<br><br>\
+			    		</div>\
+			    		<div data-id="1" id="single_1">\
+			    			<input type="text" name="single_text[]" placeholder="Answer" class="form-inline">\
+			    			<label for="single_value">Correct</label>\
+			    			<input type="radio" value="1" name="single_value" class="form-inline">\
+			    			<br><br>\
+			    		</div>\
+		    		</div>\
 		    	');		    	
 		        break;
 		    }
 		    case 3: {
 		    	answer_counter = -1;
 		    	$('#answers').empty();
-		    	$('#answers').html('<label>Expected Answer</label>\
+		    	$('#answers').html('<label>Answer</label>\
 		    		<div id="dynamic_multi">\
 		    		<textarea class="form-control" name="single_text"></textarea>\
 		    		</div>\
@@ -414,12 +487,19 @@ $(function() {
 		        break;
 		    }
 		    case 4: {
-		    	answer_counter = -1;
+		    	answer_counter = 0;//-1;
 		    	$('#answers').empty();
 		    	$('#answers').html('<label>Answers</label>\
 		    		<span class="btn btn-default label label-success" id="add_multi_free">Add</span>\
 		    		<span class="btn btn-default label label-danger" id="sub_multi_free">Subtract</span>\
-		    		<div id="dynamic_multi"></div>\
+		    		<div id="dynamic_multi">\
+		    			<div data-id="0" id="single_0">\
+		    				<input type="text" name="multi_free_text[]" placeholder="Answer" class="form-inline">\
+		    				<label for="single_value">Correct</label>\
+		    				<input type="text" value="" name="multi_free_value[]" class="form-inline">\
+		    				<br><br>\
+		    			</div>\
+		    		</div>\
 		    	');		    	
 
 		        break;
@@ -442,9 +522,11 @@ $(function() {
 	');
 	});
 
-	$('#answers').on('click', '#sub_multi', function() {
-		$('#multi_'+answer_counter).remove();	
-		--answer_counter;
+	$('#answers').on('click', '#sub_multi', function() {		
+		if(answer_counter>2){
+			$('#multi_'+answer_counter).remove();	
+			--answer_counter;
+		}
 	});
 
 	$('#answers').on('click', '#add_single', function() {
@@ -457,9 +539,11 @@ $(function() {
 	');
 	});
 
-	$('#answers').on('click', '#sub_single', function() {
-		$('#single_'+answer_counter).remove();	
-		--answer_counter;
+	$('#answers').on('click', '#sub_single', function() {	
+		if(answer_counter>1){
+			$('#single_'+answer_counter).remove();	
+			--answer_counter;
+		}
 	});
 
 	$('#answers').on('click', '#add_multi_free', function() {
@@ -473,8 +557,10 @@ $(function() {
 	});
 
 	$('#answers').on('click', '#sub_multi_free', function() {
-		$('#single_'+answer_counter).remove();	
-		--answer_counter;
+		if(answer_counter>0){
+			$('#single_'+answer_counter).remove();	
+			--answer_counter;
+		}
 	});
 	
 	$('.select').click(function(event) {

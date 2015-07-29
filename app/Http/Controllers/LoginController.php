@@ -42,8 +42,22 @@ class LoginController extends Controller {
         
         $user = NULL;
 		$input = $request->all();
-		if (Auth::attempt(['login' => $input['login'], 'password' => $input['password']])) {
+		if (Auth::attempt(['login' => $input['login'], 'password' => $input['password']]) && Auth::user()->status != 0) {
 			Auth::login(Auth::user(), true);
+            // last_pass_change
+            $ddif = strtotime(date("M d Y ")) - (strtotime(Auth::user()->last_pass_change));
+            $pass_change_period = 30;
+            if(Auth::user()->user_type_id == 1) {
+                $pass_change_period = 1095; // <- 3 Years //  -2 for instant ADMIN password change !!!!
+            }
+ 
+            if (Hash::check($input['password'], Auth::user()->password) 
+                && Auth::user()->user_type_id != 5  
+                && Auth::user()->user_type_id != 6 
+                && floor($ddif/3600/24) > $pass_change_period) {  
+                return redirect('auth/reset');
+            }
+            // last_pass_change
 			if ($input['password'] == $input['login'] && Auth::user()->user_type_id != 6) {
 				return redirect('auth/reset');
 			} 
@@ -167,6 +181,7 @@ class LoginController extends Controller {
 
                 return redirect('test');
             } else {
+                //Auth::user()->timestamps = false;
                 return redirect()->intended('/');
             }
 
@@ -185,6 +200,9 @@ class LoginController extends Controller {
 			        'confirm_password' => 'required|max:25',
 			]);
 			Auth::user()->password = Hash::make($request->password);
+            // last_pass_change
+            Auth::user()->last_pass_change = \Carbon\Carbon::now()->toDateTimeString();
+            // last_pass_change
 			Auth::user()->save();
             if(Auth::user()->user_type_id == 5) {
                 return redirect('test');

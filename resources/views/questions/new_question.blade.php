@@ -37,6 +37,7 @@
 
 					{!! Form::textarea('code', null, ['class' => 'form-control']) !!}
 				</div>
+				<!--
 				<div class="form-group">
 					{!! Form::label('header_text', Lang::get('messages.header_text')) !!}
 
@@ -47,6 +48,7 @@
 
 					{!! Form::textarea('footer_text', null, ['class' => 'form-control']) !!}
 				</div>
+				-->
 				<div class="form-group">
 					{!! Form::label('question_type_id', Lang::get('messages.type')) !!}
 
@@ -67,6 +69,10 @@
 					<?php echo $errors->first('single_value[]','<div class="alert alert-danger" role="alert">
   					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
   					<span class="sr-only">Error:</span>:message</div>'); ?>					
+
+  					<?php echo $errors->first('text','<div class="alert alert-danger" role="alert">
+  					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  					<span class="sr-only">Error:</span>:message</div>'); ?>	
 
 					{!! Form::label('', Lang::get('messages.answers')) !!}
 					<span class="btn btn-default label label-success" id="add_multi">{{ Lang::get('messages.add') }}</span>

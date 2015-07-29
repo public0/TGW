@@ -84,7 +84,7 @@
 					{!! Form::checkbox('show_intro', 1, ($quiz->show_intro)?true:false, ['class' => '']) !!}
 				</div>
 				<div class="form-group">
-					{!! Form::submit(Lang::get('messages.edit'), ['class' => 'btn btn-primary form-control']) !!}
+					{!! Form::submit(Lang::get('messages.submit'), ['class' => 'btn btn-primary form-control']) !!}
 				</div>
 				{!! Form::close() !!}
 				<div class="panel-body">

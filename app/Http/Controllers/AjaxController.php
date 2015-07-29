@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use \Illuminate\Support\Facades\DB;
 
 //use Illuminate\Http\Request;
 use App\Category;
@@ -79,7 +80,11 @@ class AjaxController extends Controller {
 						$quizJobs = TRUE;
 					}					
 				}
-
+                foreach($row->assigned as $aQuiz){
+                   if (!empty($aQuiz)) {
+						$quizJobs = TRUE;
+					}					
+				}
 				if(in_array($row->category['id'], $uCat) || ($row->user_id != 0 && $user->id == $row->user_id) ) {
 					$row->categoryName = $row->category['name'];
 					if(in_array(18, $this->privsArray)) {
@@ -99,7 +104,11 @@ class AjaxController extends Controller {
 					} else {
 						$row->privileges = '';
 					}
-					$row->actions = view('ajax/quizzes_view', compact('row', 'quizJobs'))->render();
+					$label = ($row->status)?'label-success':'label-danger';
+				    $stat_quiz =($row->status)?\Lang::get('messages.active'):\Lang::get('messages.inactive');
+				    $row->status = '<span class="label '.$label.'">'.$stat_quiz.'</span>';
+					
+					$row->actions = view('ajax/quizzes_view', compact('row', 'quizJobs','user'))->render();
 				} else {
 					unset($data->data[$key]);
 				}
@@ -117,7 +126,11 @@ class AjaxController extends Controller {
 						$continue =TRUE;
 				 	}			
 				}
-                   
+                foreach($row->assigned as $aQuiz){
+                   if (!empty($aQuiz)) {
+						$quizJobs = TRUE;
+					}					
+				}   
 				if($continue){
 						
 					$row->categoryName = $row->category['name'];
@@ -138,7 +151,10 @@ class AjaxController extends Controller {
 					} else {
 						$row->privileges = '';
 				    }
-						$row->actions = view('ajax/quizzes_view', compact('row', 'quizJobs'))->render();
+				        $label = ($row->status)?'label-success':'label-danger';
+				        $stat_quiz =($row->status)?\Lang::get('messages.active'):\Lang::get('messages.inactive');
+				        $row->status = '<span class="label '.$label.'">'.$stat_quiz.'</span>';
+						$row->actions = view('ajax/quizzes_view', compact('row', 'quizJobs','user'))->render();
 				} else {
 					unset($data->data[$key]);
 				}
@@ -156,7 +172,11 @@ class AjaxController extends Controller {
 						$quizJobs = TRUE;
 					}					
 				}
-				
+				foreach($row->assigned as $aQuiz){
+                   if (!empty($aQuiz)) {
+						$quizJobs = TRUE;
+					}					
+				}
 				$row->categoryName = $row->category['name'];
 				if(in_array(18, $this->privsArray) ) {
 		    		if( /*!$quizJobs && */!$row->assigned->count()) {
@@ -175,7 +195,23 @@ class AjaxController extends Controller {
 				} else {
 					$row->privileges = '';
 				}
-				$row->actions = view('ajax/quizzes_view', compact('row', 'quizJobs'))->render();
+				if($row->status == 1){
+			    	$quiz_stat = 0;
+			    	$row->status= '
+							<form method="GET" action="'.\URL::to('/').'/quiz/status/'.$row->id.'/'.$quiz_stat.'" accept-charset="UTF-8">
+							   	<input class="btn-sm label-info" type="submit" value="'. \Lang::get("messages.active").'">
+							</form>
+						';
+			    }else{
+			    	$quiz_stat = 1;
+			    	$row->status =  '
+
+							<form method="GET" action="'.\URL::to('/').'/quiz/status/'.$row->id.'/'.$quiz_stat.'" accept-charset="UTF-8">
+							    <input class="btn-sm label-danger" type="submit" value="'. \Lang::get("messages.inactive").'">
+							</form>
+						';
+			    }
+				$row->actions = view('ajax/quizzes_view', compact('row', 'quizJobs','user'))->render();
 			}
     	}
 
@@ -187,12 +223,25 @@ class AjaxController extends Controller {
 	*/
 	public function getUsers() {
 		$data = new \stdClass;
-		$data->data = User::all();
-		foreach($data->data as $row) {
-			$row->uType = $row->type->type;
-			$row->fullName = $row->name.' '.$row->surname;
-			$row->actions = view('ajax/users_view', compact('row'))->render();
-		}
+        $logged_user = Auth::user()->user_type_id;
+        if($logged_user == 2){
+           $data->data = User::whereIn('user_type_id',[3,6,8])->get();
+        }elseif($logged_user == 3){
+          $data->data = User::whereIn('user_type_id',[6])->get();
+        }elseif($logged_user == 8){
+          $data->data = User::all()->whereIn('user_type_id',[3,6])->get();
+        }else{
+              $data->data = User::all();
+        }
+ 
+        foreach($data->data as  $row) {
+                $row->uType = $row->type->type;
+                $row->fullName = $row->name.' '.$row->surname;
+                $row->actions = view('ajax/users_view', compact('row'))->render();
+                $label = ($row->status)?'label-success':'label-danger';
+                $stat =($row->status)?\Lang::get('messages.active'):\Lang::get('messages.inactive');
+                $row->status = '<span class="label '.$label.'">'.$stat.'</span>';
+        }
 		return response()->json($data);
 	}
 
@@ -214,9 +263,20 @@ class AjaxController extends Controller {
 		$data->data = Assignement::with(['job' => function($query) {
 
 		}])->orderBy('id', 'DESC')->groupBy('assigned_job')->get();
+
+
+		//$data->data = Assignement::All();
+
+
 		foreach($data->data as $key => $row) {
 			$officersArr = [];
 			$row->show = TRUE;
+			
+			// if(!isset($row->quizzes)){
+			// 	$row->show = FALSE;
+			// 	break;
+			// }	
+
 			if(empty($row->quizzes->toArray()) && $user->user_type_id == 4 && !empty($uCat) ) {
 				$row->show = FALSE;
 			}
@@ -233,7 +293,7 @@ class AjaxController extends Controller {
 		    			break;
 		    		}
 	    		} else {
-		    		$row->show = TRUE;
+		    		   $row->show = TRUE;
 	    		}
 //	    		echo $row->show.'-'.$quiz->quiz->id.'|';
 	    	}
@@ -272,7 +332,7 @@ class AjaxController extends Controller {
 	* Display Quiz Assignments
 	*/
 
-	public function getAssignedQuizzes($qid) {
+	public function getAssignedQuizzes($aid, $qid) { // Show Assignments - Quizzes only for selected job : initial doar un parametru $qid
 		
 		$data = new \stdClass;
 		$user = Auth::user();
@@ -281,14 +341,17 @@ class AjaxController extends Controller {
 		foreach ($userCategories as $userCategory) {
 			$uCat[] = $userCategory->id;
 		}
+		// Show Assignments - Quizzes only for selected job
+		$assJobId = DB::table('assignements')->where('id','=', $aid)->lists('assigned_job');
 		$data->data = Assignement::with(['quizzes' => function($query) use ($qid){
 			$query->whereIn('quiz_id', [$qid]);
-
-		}])->orderBy('id', 'DESC')->get();
+		}])->where('assigned_job','=', $assJobId[0])->orderBy('id', 'DESC')->get();
+		// Show Assignments - Quizzes only for selected job
 		$score = [];
 		$i = 1;
 		$job = [];
 		foreach($data->data as $key => $row) {
+			
 			if(isset($row->user->name)) {
 				if(isset($row->quizzes) && !$row->quizzes->isEmpty()) {
 					foreach ($row->quizzes as $quiz) {
@@ -313,8 +376,30 @@ class AjaxController extends Controller {
 					    }
 
 					    /*Populate Here*/
+					      $creator = User::find($quiz->quiz->user_id);
+						   $uUnCat = DB::table('category_user')->where('category_id', $quiz->quiz->category_id)->lists('user_id');
+					      if(!empty($uUnCat)){
+					         $tech = User::find($uUnCat[0]);
+                          }else{
+                          	$tech = '';
+                          }
 					    $row->jobTitle  = $row->job->title.'('.$row->job->candidates.')';
-					    $row->QuizTitle = $quiz->quiz->name;
+					    //$row->QuizTitle = $quiz->quiz->name.'<br /><small><i>[by '.$creator->name.' '.$creator->surname.']</i></small>';
+					     if(!empty($creator) && !empty($tech)){
+                           $row->QuizTitle = $quiz->quiz->name.'<br /><small><i>by '.$creator->name.' '.$creator->surname.'</i></small>'.'<br /><small><i>Tech: '.$tech->name.' '.$tech->surname.'</i></small>';
+					    }elseif(!empty($tech)){
+                           $row->QuizTitle = $quiz->quiz->name.'<br /><small><i>Tech: '.$tech->name.' '.$tech->surname.'</i></small>';	
+
+					    }else{
+					    	$row->QuizTitle = $quiz->quiz->name.'<br />';
+					    }
+					   
+				    	if(!empty($row->user->name)) {
+						    $row->userName  = $row->user->name.' '.$row->user->surname;
+				    	} else {
+				    		$row->userName = $row->user->login;
+				    	}
+					   
 				    	if(!empty($row->user->name)) {
 						    $row->userName  = $row->user->name.' '.$row->user->surname;
 				    	} else {
@@ -329,11 +414,21 @@ class AjaxController extends Controller {
 						}
 
 						$row->goal = view('ajax/quiz_assignment_pass_score', compact('row', 'quiz', 'user', 'uCat'))->render();
+
 						if($score[$quiz->id]) {
 							$row->score = (!$quiz->done)?'0%': round(($quiz->mark / $score[$quiz->id]) * 100, 1).'%';
 						} else {
 							$row->score = '0%';
 						}
+
+						// gata
+						if($quiz->final == 1){
+							$gata = '<small>FINAL</small>';//asset('/images/blinking_green_light.jpg');
+						}else{
+							$gata = '<small><i>pending</i></small>';//asset('/images/blinking_green_light.gif');
+						}
+						$row->gata = $gata;//'<img src="'.$srcImg.'">';
+						// gata
 
 						$row->quizShow = '<a href="'.url('results/'.$quiz->user_id.'/'.$row->id.'/'.$quiz->quiz_id).'">'.\Lang::get($quiz->quiz->name).'</a><br>';
 
@@ -376,7 +471,7 @@ class AjaxController extends Controller {
 	            $uJob[] = $userJob->id;
 	    }
 		    if($user->user_type_id == 3){
-		            $data->data = Job::whereIn('id', $uJob)->get();
+		           $data->data = Job::whereIn('id', $uJob)->get();
 		    }else{
 		           $data->data = Job::all();
 		    } 
@@ -397,7 +492,7 @@ class AjaxController extends Controller {
 		$input = \Input::get('option');
 //		$job = Job::find($input);
 		$uJobs = [];
-        $users = User::select(\DB::raw("CONCAT(name, ' ', surname) AS full_name, id"))->where('user_type_id',6)->get();
+        $users = User::select(\DB::raw("CONCAT(name, ' ', surname) AS full_name, id"))->where('user_type_id',6)->where('status', 1)->get();
 	
 		foreach($users as $user){
 			$showUser = TRUE;

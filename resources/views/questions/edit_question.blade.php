@@ -43,6 +43,7 @@
 
 					{!! Form::textarea('code', $question->code, ['class' => 'form-control']) !!}
 				</div>
+				<!--
 				<div class="form-group">
 					{!! Form::label('header_text', Lang::get('messages.header_text')) !!}
 
@@ -52,7 +53,7 @@
 					{!! Form::label('footer_text', Lang::get('messages.footer_text')) !!}
 
 					{!! Form::textarea('footer_text', $question->footer_text, ['class' => 'form-control']) !!}
-				</div>
+				</div> -->
 				<div class="form-group">
 					{!! Form::label('question_type_id', Lang::get('messages.type')) !!}
 
@@ -72,8 +73,13 @@
   					<span class="sr-only">Error:</span>:message</div>'); ?>					
 					<?php echo $errors->first('single_value[]','<div class="alert alert-danger" role="alert">
   					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  					<span class="sr-only">Error:</span>:message</div>'); ?>	
+
+  					<?php echo $errors->first('text','<div class="alert alert-danger" role="alert">
+  					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
   					<span class="sr-only">Error:</span>:message</div>'); ?>					
-					{!! Form::label('', Lang::get('messages.answers')) !!}
+
+					{!! Form::label('', Lang::get('messages.exp_answer')) !!}
 					@if($question->question_type_id == 1)
 					<span class="btn btn-default label label-success" id="add_multi">{{ Lang::get('messages.add') }}</span>
 					<span class="btn btn-default label label-danger" id="sub_multi">{{ Lang::get('messages.subtract') }}</span>

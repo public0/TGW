@@ -20,6 +20,7 @@
 					            <th class="text-center">{{ Lang::get('messages.started_at') }}</th>
 					            <th class="text-center col-md-2">{{ Lang::get('messages.pass_score') }}</th>
 					            <th class="text-center">{{ Lang::get('messages.score') }}</th>
+					            <th class="text-center">{{ Lang::get('messages.gata') }}</th>
 					            <th class="text-left">{{ Lang::get('messages.quizzes') }}</th>
 					            <th class="text-center">{{ Lang::get('messages.actions') }}</th>
 					        </tr>

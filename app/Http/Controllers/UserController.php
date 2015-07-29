@@ -2,6 +2,7 @@
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use \Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 //use Request;
@@ -45,7 +46,7 @@ class UserController extends Controller {
 					$types += User_Type::orderBy('type', 'DESC')->where('id', '!=', 5)->lists('type','id');
 				break;
 			case 2:
-					$types += User_Type::where('id', 8)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
+					$types += User_Type::whereIn('id', [3, 6, 8])->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
 				break;
 			case 3:
 					$types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
@@ -58,8 +59,21 @@ class UserController extends Controller {
 				# code...
 				break;
 		}
+		// $categories = Category::lists('name','id');
+		// return view('user.new_user', compact('types', 'categories'));
+
 		$categories = Category::lists('name','id');
-		return view('user.new_user', compact('types', 'categories'));
+		$uUnCat = [];
+		$uUnCat = DB::table('category_user')
+					->distinct()
+                    ->lists('category_id');
+		foreach ($uUnCat as $value) {
+			unset($categories[$value]);
+		}
+
+		return view('user.new_user', compact('types', 'categories', 'uUnCat'));
+
+
 	}
 
 	/**
@@ -85,8 +99,11 @@ class UserController extends Controller {
 
 //		$input['login'] = strtolower($input['name'].'.'.$input['surname']);
 		$input['login'] = strtolower($input['login']);
-
+        $input['status'] = 1;
 		$input['password'] = Hash::make(strtolower($input['login']));
+		// last_pass_change
+		$input['last_pass_change'] = \Carbon\Carbon::now()->toDateTimeString();
+		// last_pass_change
 		$newUser = User::create($input);
 		switch ($input['user_type_id']) {
 			case 1: /* Admin */
@@ -198,24 +215,48 @@ class UserController extends Controller {
 		$types = [ 0 => \Lang::get('messages.select')];
 		switch (Auth::user()->user_type_id) {
 			case 1:
-					$types += User_Type::orderBy('type', 'DESC')->lists('type','id');
-				break;
-			case 2:
-					$types += User_Type::where('id', 8)->orderBy('type', 'DESC')->lists('type','id');
-				break;
-			case 3:
-					$types += User_Type::where('id', 6)->orderBy('type', 'DESC')->lists('type','id');
-				break;
-			case 8:
-					$types += User_Type::whereIn('id', [8, 3, 6])->orderBy('type', 'DESC')->lists('type','id');
-				break;
+					   $types += User_Type::orderBy('type', 'DESC')->where('id', '!=', 5)->lists('type','id');
+                break;
+            case 2:
+                    if($user->user_type_id == 6){
+                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');}
+                    else{
+                        $types += User_Type::whereIn('id', [3,8])->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
+                    }
+                break;
+            case 3: 
+ 
+                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
+                break;
+            case 8:
+                    if($user->user_type_id == 6){
+                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');}
+                    else{
+                        $types += User_Type::where('id', 3)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
+                    }
+ 
+                break;
 			
 			default:
 				# code...
 				break;
 		}
+		// $categories = Category::lists('name','id');
+		// return view('user.edit_user', compact('user','types', 'categories', 'uCat'));
+
 		$categories = Category::lists('name','id');
+		$uUnCat = [];
+		$uUnCat = DB::table('category_user')
+					->distinct()
+                    ->where('user_id', '<>', $id)
+                    ->lists('category_id');
+		foreach ($uUnCat as $value) {
+			unset($categories[$value]);
+		}
 		return view('user.edit_user', compact('user','types', 'categories', 'uCat'));
+
+
+
 	}
 
 	/**
@@ -250,6 +291,10 @@ class UserController extends Controller {
 		$user->name = $input['name'];
 		$user->surname = $input['surname'];
 		$user->login = $input['login'];
+
+		$pass = $input['password'];
+		$passConf = $input['password_confirmation'];
+		
 		$user->email = $input['email'];
 		$user->phone = $input['phone'];
 		$user->heramus_link = $input['heramus_link'];
@@ -316,6 +361,23 @@ class UserController extends Controller {
 		return redirect('users');		
 	}
 
+/**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function statusUser($id, $stat)
+    {
+        
+ 
+        $user = User::find($id);
+        $user->status = $stat;
+        $user->save();
+        
+ 
+        return redirect('users');       
+    }
 	/**
 	 * Remove the specified resource from storage.
 	 *

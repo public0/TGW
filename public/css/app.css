@@ -6257,3 +6257,27 @@ label,
 .error-template {padding: 40px 15px;text-align: center;}
 .error-actions {margin-top:15px;margin-bottom:15px;}
 .error-actions .btn { margin-right:10px; }
+
+.column_filter.big {
+    width: 100%; /*70%;*/
+    float: left;
+    font-weight: normal;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    line-height: 1.2;
+    color: #9F9F9F;
+}
+.square {
+  line-height: 1;
+}
+input.column_filter.no {
+  margin: 0;
+  display: none;
+}
+
+.col-md-10 {
+  padding-left: 0px !important;
+}
+
+.btn-action {
+}

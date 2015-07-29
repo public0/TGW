@@ -16,7 +16,7 @@ class User_quiz extends Model {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_id', 'quiz_id', 'assignement_id', 'mark', 'done', 'reason',];
+	protected $fillable = ['user_id', 'quiz_id', 'assignement_id', 'mark', 'done', 'final', 'reason'];
 
 	public function user() {
         return $this->hasOne('App\User', 'id', 'user_id');

@@ -87,6 +87,9 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('assignement/delete/{id}','AssignementController@destroy');
 	Route::delete('assignement/delete/{id}','AssignementController@destroy');
 
+    Route::post('user/status/{id}/{stat}', 'UserController@statusUser');
+	Route::get('quiz/status/{id}/{quizstat}', 'QuizController@statusQuiz');
+	
 	Route::get('test/','TestController@take');
 	Route::get('test/score','TestController@score');
 	Route::put('test/submit','TestController@submit');
@@ -104,6 +107,9 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('ajax/get_users', 'AjaxController@getUsers');
 	Route::get('ajax/get_assignments', 'AjaxController@getAssignments');
 	Route::get('ajax/get_assigned_quizzes/{id}', 'AjaxController@getAssignedQuizzes');
+
+    Route::get('ajax/get_assigned_quizzes/{aid}/{qid}', 'AjaxController@getAssignedQuizzes'); //
+	
 	Route::get('ajax/get_jobs', 'AjaxController@getJobs');
 	Route::get('ajax/assigned_users', 'AjaxController@assignedUsers');
 

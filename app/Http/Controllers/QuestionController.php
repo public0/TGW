@@ -124,6 +124,8 @@ class QuestionController extends Controller {
 	 */
 	public function quiz_store($id, Req $request)
 	{
+
+
 		$this->validate($request, [
 		        'points' => 'required|numeric',
 		        'question' => 'required',
@@ -131,65 +133,141 @@ class QuestionController extends Controller {
 		]);
 
 		$input = Request::all();
-		$newQuestion = Question::create($input);
-		$newQuestion->code = $input['code'];
 	
-		$parentQuiz = Quiz::where('id', '=', $id)->first();
-		$sum = $parentQuiz->questionsPoints;
-		foreach ($sum as $row){ 
-        	$sumAll = $row['sum'];
-        }
-		$parentQuiz->score = $sumAll + $newQuestion->points ;
-
-		$newQuestion->save();
-	    $parentQuiz->save();
-
-
-		$file = Request::file('question_image');
-
-		if(!is_null($file) && $file->isValid()) {
-			$extension = $file->getClientOriginalExtension();
-			$destinationPath = 'uploads';
-			$file->move($destinationPath, $file->getClientOriginalName());
-			$newQuestion->question_image = $destinationPath.'/'.$file->getClientOriginalName();
-			$newQuestion->save();
-		}
-		$newQuestion->quiz()->attach($id);
+		
 		switch ($input['question_type_id']) {
 			case '1':
-				$answers = count($input['multi_text']);
-				for ($i=0; $i < $answers; $i++) {
-					$newAnswer = new Answer;
-					$newAnswer->question_id = $newQuestion->id;
-					$newAnswer->answer = $input['multi_text'][$i];
-					$newAnswer->correct = $input['multi_value'][$i];
-					$newAnswer->save();
+				$go = FALSE;
+				$text = 'error: ';
+				if($input['multi_text']) {
+					$answers = count($input['multi_text']);
+					$answersText = 0;
+					$checks = 0;
+					for ($i=0; $i < $answers; $i++) {
+						if(!empty($input['multi_text'][$i])){
+							$answersText++;
+						}
+						if(!empty($input['multi_value'][$i])){
+							$checks++;
+						}
+					}
+					if($answersText == $answers && $checks > 1){
+						$go = TRUE;
+					}else{
+						if($answersText != $answers){
+							$text .= 'One of "Answers" boxes is empty!';
+						}
+						if($checks == 0){
+							$text .= ' All of "Correct" boxes are empty!';
+						}
+						if($checks == 1){
+							$text .= ' At least two of "Correct" boxes MUST be checked!';						
+							//$go = TRUE;
+						}
+					}
+				}else{
+					$text = 'All of "Answers" boxes are empty!';
 				}
 				break;
 			case '2':
-				$answers = count($input['single_text']);
-				$correctAnswer = $input['single_value'];
-				for ($i=0; $i < $answers; $i++) {
-					$newAnswer = new Answer;
-					$newAnswer->question_id = $newQuestion->id;
-					$newAnswer->answer = $input['single_text'][$i];
-					$newAnswer->correct = ($i == (int)$correctAnswer)?1:0;
-					$newAnswer->save();					
+				$go = FALSE;
+				$text = '';
+				if(isset($input['single_text']) && isset($input['single_value'])) {
+					$answers = count($input['single_text']);
+					$correctAnswer = $input['single_value'];
+					$hasValue = FALSE;
+					$answersText = 0;
+					for ($i=0; $i < $answers; $i++) {
+						if(!empty($input['single_text'][$i])){
+							$answersText++;
+						}
+						$hasValue = TRUE;				
+					}
+					if($answersText == $answers && $hasValue){
+						$go = TRUE;
+					}else{
+						$text = 'At least one of "Answers" boxes is empty. Do the right thing, please.';
+					}
+				}else{
+					$text = 'All "Answers" boxes are empty and/or all of "Correct" boxes are empty. Do the right thing, please.';
 				}
 				break;
 			case '3':
-					$newAnswer = new Answer;
-					$newAnswer->question_id = $newQuestion->id;
-					$newAnswer->answer = isset($input['single_text'])?$input['single_text']:'';
-					$newAnswer->correct = 1;
-					$newAnswer->save();
-
+				$go = FALSE;
+				$text = '';
+				if(isset($input['single_text'])) {
+					if(empty($input['single_text'])){
+						$go = TRUE;
+					}else{
+						$text = '"Answer" box MUST be empty!';
+					}
+				}
 				break;
 			case '4':
-				dd($input);
+				//dd($input);
 				break;			
 		}
-		return redirect('questions/'.$id);
+
+		if($go){
+			$newQuestion = Question::create($input);
+			$newQuestion->code = $input['code'];
+			$parentQuiz = Quiz::where('id', '=', $id)->first();
+			$sum = $parentQuiz->questionsPoints;
+			foreach ($sum as $row){ 
+	        	$sumAll = $row['sum'];
+	        }
+			$parentQuiz->score = $sumAll + $newQuestion->points ;
+			if(isset($checks) && $checks == 1){
+				$newQuestion->question_type_id = 2;
+			}
+			$newQuestion->save();
+		    $parentQuiz->save();
+			$file = Request::file('question_image');
+			if(!is_null($file) && $file->isValid()) {
+				$extension = $file->getClientOriginalExtension();
+				$destinationPath = 'uploads';
+				$file->move($destinationPath, $file->getClientOriginalName());
+				$newQuestion->question_image = $destinationPath.'/'.$file->getClientOriginalName();
+				$newQuestion->save();
+			}
+			$newQuestion->quiz()->attach($id);		
+
+			switch ($newQuestion->question_type_id) {
+				case '1':		
+						for ($i=0; $i < $answers; $i++) {
+							$newAnswer = new Answer;
+							$newAnswer->question_id = $newQuestion->id;
+							$newAnswer->answer = $input['multi_text'][$i];
+							$newAnswer->correct = $input['multi_value'][$i];
+							$newAnswer->save();
+						}						
+					break;
+				case '2':
+						for ($i=0; $i < $answers; $i++) {
+							$newAnswer = new Answer;
+							$newAnswer->question_id = $newQuestion->id;
+							$newAnswer->answer = $input['single_text'][$i];
+							$newAnswer->correct = ($i == (int)$correctAnswer)?1:0;
+							$newAnswer->save();	
+						}					
+					break;
+				case '3':
+						$newAnswer = new Answer;
+						$newAnswer->question_id = $newQuestion->id;
+						$newAnswer->answer = $input['single_text'];
+						$newAnswer->correct = 1;
+						$newAnswer->save();	
+					break;
+				case '4':
+					//dd($input);
+					break;			
+			}
+	    	return redirect('questions/'.$id);
+
+		}else{
+			return redirect()->back()->withErrors(['text' => $text]);
+		}
+
 	}
 
 	/**
@@ -228,9 +306,10 @@ class QuestionController extends Controller {
 	public function update($id, Req $request)
 	{
 		$this->validate($request, [
-		        'points' => 'required|numeric',
-		        'question' => 'required',
-		        'question_type_id' => 'required',
+	        'points' => 'required|numeric',
+	        'question' => 'required',
+	        'question_type_id' => 'required',
+
 		]);
 
 		$input = Request::all();
@@ -238,8 +317,8 @@ class QuestionController extends Controller {
 		$question = Question::find($id);
 		$question->question = $input['question'];		
 		$question->points = $input['points'];
-		$question->header_text = $input['header_text'];
-		$question->footer_text = $input['footer_text'];
+		//$question->header_text = $input['header_text'];
+		//$question->footer_text = $input['footer_text'];
 		$question->code = $input['code'];
 		$question->question_type_id = $input['question_type_id'];
 
@@ -251,64 +330,140 @@ class QuestionController extends Controller {
 			$question->question_image = $destinationPath.'/'.$file->getClientOriginalName();
 		}
 
-		$question->save();
-		$question->answers()->delete();
-
-		$quiz = $question->quiz;
-		foreach ($quiz as $row){ 
-        	$quizId = $row['id'];
-        }
-		$parentQuiz = Quiz::where('id', '=', $quizId)->first();
-		$sum = $parentQuiz->questionsPoints;
-		foreach ($sum as $row){ 
-        	$sumAll = $row['sum'];
-        }
-		$parentQuiz->score = $sumAll - $request->points + $question->points ;
-		
-	    $parentQuiz->save();
-		
 		//$question->quiz()->attach($id);
 		switch ($input['question_type_id']) {
 			case '1':
+				$go = FALSE;
+				$text = '';
 				if(isset($input['multi_text'])) {
 					$answers = count($input['multi_text']);
+					$answersText = 0;
+					$checks = 0;
 					for ($i=0; $i < $answers; $i++) {
-						$newAnswer = new Answer;
-						$newAnswer->question_id = $question->id;
-						$newAnswer->answer = $input['multi_text'][$i];
-						$newAnswer->correct = $input['multi_value'][$i];
-						$newAnswer->save();
+						if(!empty($input['multi_text'][$i])){
+							$answersText++;
+						}
+						if(!empty($input['multi_value'][$i])){
+							$checks++;
+						}
 					}
+
+					if($answersText == $answers && $checks > 1){
+						$go = TRUE;
+					}else{
+						if($answersText != $answers){
+							$text .= 'One of "Answers" boxes is empty!';
+						}
+						if($checks == 0){
+							$text .= ' All of "Correct" boxes are empty!';
+						}
+						if($checks == 1){
+							$text .= ' At least two of "Correct" boxes MUST be checked, OR choose "One Answer(Radio)"!';
+						}
+					}
+				}else{
+					$text = 'All of "Answers" boxes are empty!';
 				}
+
 				break;
 			case '2':
-				if(isset($input['single_text'])) {
+				$go = FALSE;
+				$text = '';
+				if(isset($input['single_text']) && isset($input['single_value'])) {
 					$answers = count($input['single_text']);
 					$correctAnswer = $input['single_value'];
+					$hasValue = FALSE;
+					$answersText = 0;
 					for ($i=0; $i < $answers; $i++) {
-						$newAnswer = new Answer;
-						$newAnswer->question_id = $question->id;
-						$newAnswer->answer = $input['single_text'][$i];
-						$newAnswer->correct = ($i == (int)$correctAnswer)?1:0;
-						$newAnswer->save();					
-					}					
+						if(!empty($input['single_text'][$i])){
+							$answersText++;
+						}
+						$hasValue = TRUE;				
+					}
+					if($answersText == $answers && $hasValue){
+						$go = TRUE;
+					}else{
+						$text = 'At least one of "Answers" boxes is empty. Do the right thing, please.';
+
+					}
+				}else{
+					$text = 'All "Answers" boxes are empty and/or all of "Correct" boxes are empty. Do the right thing, please.';
 				}
 				break;
 			case '3':
-					if(isset($input['single_text'])) {
+				$go = FALSE;
+				$text = '';
+				if(isset($input['single_text'])) {
+					if(empty($input['single_text'])){
+						$go = TRUE;
+					}else{
+						$text = '"Answer" box MUST be empty!';
+					}
+				}
+				break;
+			case '4':
+				$go = FALSE;
+				$text = 'Feature not implemented yet. Choose another type of questions, please';
+				//dd($input);
+				break;			
+		}
+
+		if($go){
+
+			$question->save();
+			$question->answers()->delete();
+
+			$quiz = $question->quiz;
+			foreach ($quiz as $row){ 
+	        	$quizId = $row['id'];
+	        	break;
+	        }
+
+			$parentQuiz = Quiz::find($quizId);
+			$sum = $parentQuiz->questionsPoints;
+			foreach ($sum as $row){ 
+	        	$sumAll = $row['sum'];
+	        }
+			$parentQuiz->score = $sumAll - $request->points + $question->points;
+		    $parentQuiz->save();
+
+		    switch ($question->question_type_id) {
+				case '1':		
+						for ($i=0; $i < $answers; $i++) {
+							$newAnswer = new Answer;
+							$newAnswer->question_id = $question->id;
+							$newAnswer->answer = $input['multi_text'][$i];
+							$newAnswer->correct = $input['multi_value'][$i];
+							$newAnswer->save();
+						}						
+					break;
+				case '2':
+						for ($i=0; $i < $answers; $i++) {
+							$newAnswer = new Answer;
+							$newAnswer->question_id = $question->id;
+							$newAnswer->answer = $input['single_text'][$i];
+							$newAnswer->correct = ($i == (int)$correctAnswer)?1:0;
+							$newAnswer->save();
+						}					
+					break;
+				case '3':
 						$newAnswer = new Answer;
 						$newAnswer->question_id = $question->id;
 						$newAnswer->answer = $input['single_text'];
 						$newAnswer->correct = 1;
 						$newAnswer->save();
-					}
-				break;
-			case '4':
-				//dd($input);
-				break;			
+					break;
+				case '4':
+					//dd($input);
+					break;			
+			}
+
+			return redirect('questions/'.$quizId);
+		}else{
+			return redirect()->back()->withErrors(['text' => $text]);
 		}
-		return redirect()->back();
 	}
+
 
 	/**
 	 * Remove the specified resource from storage.

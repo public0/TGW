@@ -43,7 +43,7 @@
   					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
   					<span class="sr-only">Error:</span>:message</div>'); ?>					
 					{!! Form::label('notified', Lang::get('messages.emails')) !!}
-					{!! Form::text('notified', null, ['class' => 'form-control', 'placeholder' => 'example@vauvan.ro;example2@vauvan.ro']) !!}
+					{!! Form::text('notified', null, ['class' => 'form-control', 'placeholder' => 'example@vauban.ro;example2@vauban.ro']) !!}
 				</div>
 				<div class="form-group">
 					<?php echo $errors->first('quizzes','<div class="alert alert-danger" role="alert">
