@@ -15,14 +15,14 @@ class CreateQuizzesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('category_id')->unsigned();
-			$table->integer('user_id')->unsigned();
+			$table->integer('user_id')->unsigned()->default(0);
 			$table->string('name', '60');
 			$table->text('description');
 
-			$table->integer('score_junior')->unsigned();
-			$table->integer('score_mid')->unsigned();
-			$table->integer('score_senior')->unsigned();
-            $table->integer('score')->unsigned();
+			$table->integer('score_junior')->unsigned()->default(0);
+			$table->integer('score_mid')->unsigned()->default(0);
+			$table->integer('score_senior')->unsigned()->default(0);
+            $table->integer('score')->unsigned()->default(0);
 
 			$table->boolean('show_intro')->default(0);
 			$table->boolean('status')->default(0);

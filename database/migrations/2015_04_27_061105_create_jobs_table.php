@@ -15,7 +15,7 @@ class CreateJobsTable extends Migration {
 		Schema::create('jobs', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('user_id')->unsigned();
+			$table->integer('user_id')->unsigned()->default(0);
 			$table->string('title');
 			$table->integer('candidates')->unsigned();
 			$table->text('notified');
@@ -31,6 +31,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'Intern',
 		            'candidates' => '0',
 		            'description' => '',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -43,6 +44,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'EAI CONTROL M',
 		            'candidates' => '4',
 		            'description' => 'Profil EAI (J2EE applications servers (WAS or WBL or JBOSS)) engineering + Control M automation',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -55,6 +57,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'Java dev',
 		            'candidates' => '20',
 		            'description' => 'Java developer',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -67,6 +70,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'C#.NET developer',
 		            'candidates' => '0',
 		            'description' => 'C#.NET developer',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -78,7 +82,8 @@ class CreateJobsTable extends Migration {
 		        	'id' => 5,
 		            'title' => 'Sales',
 		            'candidates' => '10',
-		            'description' => ': 	 Mini 3 years experience in sales or management of project (complex) Profile: ASE or UPB, technical or economic Preference for a woman 28-35 years old positive attitude, to do things, volunteer, energic organized and capacity to follow a lead until its resolution excellent communication skills capacity of negociation',
+		            'description' => ':Mini 3 years experience in sales or management of project (complex) Profile: ASE or UPB, technical or economic Preference for a woman 28-35 years old positive attitude, to do things, volunteer, energic organized and capacity to follow a lead until its resolution excellent communication skills capacity of negociation',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -91,6 +96,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'Recruitment',
 		            'candidates' => '0',
 		            'description' => 'Define Job Description for different profiles;  CV screening and selection ; finding the best sourcing channels;  Post the announcements for every vacant position on different sources;  Contacting the candidates, validate and scheduling for meetings;  Keep in touch with the candidates during the entire recruitment process;  Send letters to inform candidates of their acceptance or rejection of employment.',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -103,6 +109,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'BI',
 		            'candidates' => '0',
 		            'description' => 'analist BI',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -115,6 +122,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'SQL',
 		            'candidates' => '20',
 		            'description' => 'SQL all levels',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -127,6 +135,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'C# developer',
 		            'candidates' => '20',
 		            'description' => 'C# Programming Basic questions',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -139,6 +148,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'SQL AD PHARMA',
 		            'candidates' => '20',
 		            'description' => 'SQL test for AD PHARMA ',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -151,6 +161,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'Delphi AD PHARMA',
 		            'candidates' => '0',
 		            'description' => 'Delphi AD PHARMA ',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -163,6 +174,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'PHP',
 		            'candidates' => '20',
 		            'description' => 'php dev ',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -175,6 +187,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'ASP.NET',
 		            'candidates' => '20',
 		            'description' => '.NET MVC',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
@@ -187,6 +200,7 @@ class CreateJobsTable extends Migration {
 		            'title' => 'German level test',
 		            'candidates' => '20',
 		            'description' => 'German test',
+		            'notified' => '',
 		            'status' => '1',
 		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
