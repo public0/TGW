@@ -52,7 +52,7 @@ class QuizController extends Controller {
 		if(!in_array(5, $this->privsArray))
 			return redirect()->back();
 		$categories = [ 0 => \Lang::get('messages.select')];
-		$categories += Category::lists('name','id');
+		$categories += Category::orderBy('name','ASC')->lists('name','id');
 		$user = Auth::user()->id;
 
 		$user_type_id = Auth::user()->user_type_id;
@@ -128,7 +128,7 @@ class QuizController extends Controller {
 	{
 		if(!in_array(7, $this->privsArray))
 			return redirect()->back();
-		$categories = Category::lists('name','id');
+		$categories = Category::orderBy('name','ASC')->lists('name','id');
 
 		$user_type_id = Auth::user()->user_type_id;
 		if($user_type_id == 4){

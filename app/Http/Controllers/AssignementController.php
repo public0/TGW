@@ -92,7 +92,7 @@ class AssignementController extends Controller {
 		//->lists('title', 'id');
 		$jobb = Job::where('status', '1')
 		->where('start_at','<',$date)
-		->where('end_at','>',$yesterday)->get();
+		->where('end_at','>',$yesterday)->orderBy('title', 'ASC')->get();
 		$jobs['0'] = \Lang::get('messages.select');
 		foreach ($jobb as $jobss) {
 			$countJobs = Assignement::where('assigned_job', $jobss->id)->count() ; 
@@ -102,7 +102,7 @@ class AssignementController extends Controller {
 			}
 	       
 		}
-		$users = User::select(\DB::raw("CONCAT(name, ' ', surname) AS full_name, id"))->where('user_type_id',6)->where('status', 1)->lists('full_name', 'id');
+		$users = User::select(\DB::raw("CONCAT(name, ' ', surname) AS full_name, id"))->where('user_type_id',6)->where('status', 1)->orderBy('name', 'ASC')->lists('full_name', 'id');
 
 		return view('assignement.new_assignement', compact('jobs', 'users'));
 	}

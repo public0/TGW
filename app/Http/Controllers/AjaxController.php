@@ -318,6 +318,7 @@ class AjaxController extends Controller {
 				$row->jobTitle = $row->job->title;
 				$row->period = explode(' ', $row->job->start_at)[0].' - '.explode(' ', $row->job->end_at)[0];
 				$row->jobQuizzes = view('ajax/assignments_quizzes', compact('row', 'user', 'uCat'))->render();
+				$row->candidates = view('ajax/assignment_candidates', compact('row'))->render();
 
 			//  //jobs_assignments	
 			//	$row->actions = view('ajax/quiz_assignment_action', compact('row', 'quiz', 'user', 'uCat'))->render();//jobs_assignment_action', compact('row', 'user', 'uCat'))->render();

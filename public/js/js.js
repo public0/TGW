@@ -149,7 +149,14 @@ $(function() {
 	$('#assignment_table').dataTable({
 		'ajax': 'ajax/get_assignments',
 		'columnDefs' : [
-			{className: 'text-center', "targets": [ 0, 1, 2]}
+			{className: 'text-center', "targets": [ 0, 1, 2]},
+			{
+				"targets": [ 3 ],
+				"visible": false,
+				"searchable": true
+			},
+
+
 		],
 //		"processing": true,
 //        "serverSide": true,
@@ -158,6 +165,7 @@ $(function() {
 			{'data' : 'jobTitle'},
 			{'data' : 'period'},
 			{'data' : 'jobQuizzes'},
+			{'data' : 'candidates'}
 //			{'data' : 'actions'},
 		],
 	});
@@ -349,6 +357,14 @@ $(function() {
 	 	buttonWidth: '100%',
 	 });
 
+	 function compare(a,b) {
+	  if (a.label < b.label)
+	    return -1;
+	  if (a.label > b.label)
+	    return 1;
+	  return 0;
+	}
+
 	 $('#assigned_job').multiselect({
 	 	maxHeight: 200,
 	 	checkboxName: 'assigned_job',
@@ -379,19 +395,24 @@ $(function() {
 			$.get(assigned_users, 
 				{ option : selected }, 
 				function(data) {
-						console.log(data);
+						//console.log(data);
 						//var $select = $('#down'); 
 					var vData = [];
 					$.each(data,function(key, v) 
 					{
+//						console.log(v);
+
 						vData.push({label:v, value: key});
 						users.append('<option value=' + key + '>' + v + '</option>');
 					});
+						vData.sort(compare);
+						console.log(vData);
 						au.multiselect('dataprovider', vData);
 					});
 
 		 	}
 	 });
+
 
 	 $('#category').multiselect({
 	 	maxHeight: 200,

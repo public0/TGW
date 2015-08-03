@@ -36,10 +36,11 @@ class JobController extends Controller {
 			return redirect()->back();
 		$quizzes = Quiz::where('category_id', '!=', 1)->where('status',1)
 			->orWhere('category_id', 1)->where('status',1)
+			->orderBy('name','asc')
 			//->where('from', '<',\Carbon\Carbon::now())
 			//->where('to', '>',\Carbon\Carbon::now())
 			->lists('name', 'id');
-		$officers = User::select('id', \DB::raw('CONCAT(name, " ", surname) AS name'))->whereIn('user_type_id', [3, 8])->where('status',1)->lists('name','id') ;
+		$officers = User::select('id', \DB::raw('CONCAT(name, " ", surname) AS name'))->whereIn('user_type_id', [3, 8])->where('status',1)->orderBy('name','asc')->lists('name','id') ;
 		return view('jobs.new_job', compact('quizzes', 'officers'));
 	}
 

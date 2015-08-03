@@ -43,16 +43,16 @@ class UserController extends Controller {
 
 		switch (Auth::user()->user_type_id) {
 			case 1:
-					$types += User_Type::orderBy('type', 'DESC')->where('id', '!=', 5)->lists('type','id');
+					$types += User_Type::orderBy('type', 'ASC')->where('id', '!=', 5)->lists('type','id');
 				break;
 			case 2:
-					$types += User_Type::whereIn('id', [3, 6, 8])->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
+					$types += User_Type::whereIn('id', [3, 6, 8])->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
 				break;
 			case 3:
-					$types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
+					$types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
 				break;
 			case 8:
-					$types += User_Type::whereIn('id', [3, 6])->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
+					$types += User_Type::whereIn('id', [3, 6])->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
 				break;
 			
 			default:
@@ -215,24 +215,24 @@ class UserController extends Controller {
 		$types = [ 0 => \Lang::get('messages.select')];
 		switch (Auth::user()->user_type_id) {
 			case 1:
-					   $types += User_Type::orderBy('type', 'DESC')->where('id', '!=', 5)->lists('type','id');
+					   $types += User_Type::orderBy('type', 'ASC')->where('id', '!=', 5)->lists('type','id');
                 break;
             case 2:
                     if($user->user_type_id == 6){
-                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');}
+                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');}
                     else{
-                        $types += User_Type::whereIn('id', [3,8])->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
+                        $types += User_Type::whereIn('id', [3,8])->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
                     }
                 break;
             case 3: 
  
-                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
+                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
                 break;
             case 8:
                     if($user->user_type_id == 6){
-                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');}
+                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');}
                     else{
-                        $types += User_Type::where('id', 3)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
+                        $types += User_Type::where('id', 3)->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
                     }
  
                 break;
@@ -292,8 +292,8 @@ class UserController extends Controller {
 		$user->surname = $input['surname'];
 		$user->login = $input['login'];
 
-		$pass = $input['password'];
-		$passConf = $input['password_confirmation'];
+		//$pass = $input['password'];
+		//$passConf = $input['password_confirmation'];
 		
 		$user->email = $input['email'];
 		$user->phone = $input['phone'];
