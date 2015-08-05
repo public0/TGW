@@ -100,6 +100,8 @@ class UserController extends Controller {
 //		$input['login'] = strtolower($input['name'].'.'.$input['surname']);
 		$input['login'] = strtolower($input['login']);
         $input['status'] = 1;
+        $input['name'] = ucfirst($input['name']);
+        $input['surname'] = ucfirst($input['surname']);
 		$input['password'] = Hash::make(strtolower($input['login']));
 		// last_pass_change
 		$input['last_pass_change'] = \Carbon\Carbon::now()->toDateTimeString();
@@ -288,8 +290,8 @@ class UserController extends Controller {
 
 		}
 		$user->user_type_id = $input['user_type_id'];
-		$user->name = $input['name'];
-		$user->surname = $input['surname'];
+		$user->name = ucfirst($input['name']);
+		$user->surname = ucfirst($input['surname']);
 		$user->login = $input['login'];
 
 		//$pass = $input['password'];

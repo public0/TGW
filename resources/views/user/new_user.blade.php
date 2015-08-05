@@ -30,7 +30,7 @@
   					<span class="sr-only">Error:</span>:message</div>'); ?>					
 					{!! Form::label('name', Lang::get('messages.name')) !!}
 
-					{!! Form::text('name', null, ['class' => 'form-control']) !!}
+					{!! Form::text('name', null, ['class' => 'form-control text-capitalize']) !!}
 				</div>
 				<div class="form-group">
 					<?php echo $errors->first('surname','<div class="alert alert-danger" role="alert">
@@ -38,7 +38,7 @@
   					<span class="sr-only">Error:</span>:message</div>'); ?>					
 					{!! Form::label('surname', Lang::get('messages.surname')) !!}
 
-					{!! Form::text('surname', null, ['class' => 'form-control']) !!}
+					{!! Form::text('surname', null, ['class' => 'form-control text-capitalize']) !!}
 				</div>
 				<div class="form-group">
 					<?php echo $errors->first('login','<div class="alert alert-danger" role="alert">
