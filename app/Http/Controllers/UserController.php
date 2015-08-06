@@ -14,6 +14,7 @@ use App\Category;
 use App\User_type;
 use App\Privileges;
 use Auth;
+use Storage;
 
 class UserController extends Controller {
 
@@ -171,6 +172,10 @@ class UserController extends Controller {
 			break;
 
 		}
+
+		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' created '.$newUser->type->type.': '.$newUser->name.' '.$newUser->surname;
+		Storage::disk('local')->append('actions_log.log', $logMessage);
+
 		$newUser->privileges()->attach($privilegesArray);
 		if(isset($input['categories'])) {
 			$newUser->categories()->attach($input['categories']);
@@ -376,7 +381,9 @@ class UserController extends Controller {
         $user = User::find($id);
         $user->status = $stat;
         $user->save();
-        
+		$statMessage = ($stat)?'activated':'deactivated';        
+		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname." $statMessage ".$user->type->type.': '.$user->name.' '.$user->surname;
+		Storage::disk('local')->append('actions_log.log', $logMessage);
  
         return redirect('users');       
     }

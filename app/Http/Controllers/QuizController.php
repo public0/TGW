@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use App\Quiz;
 use App\Category;
 use Auth;
+use Storage;
 use App\User;
+
 class QuizController extends Controller {
 
 	/**
@@ -104,6 +106,8 @@ class QuizController extends Controller {
 			]);
 		}
 		$newQuiz = Quiz::create($input);
+		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' created the quiz '.$newQuiz->name;
+		Storage::disk('local')->append('actions_log.log', $logMessage);
 		return redirect('quizzes');
 	}
 
@@ -229,6 +233,8 @@ class QuizController extends Controller {
 			return redirect()->back();
 		$quiz = Quiz::find($id);
 		$quiz->delete();		
+		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' deleted the quiz '.$quiz->name;
+		Storage::disk('local')->append('actions_log.log', $logMessage);
 		return redirect('quizzes');
 	}
 

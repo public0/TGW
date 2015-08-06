@@ -9,6 +9,8 @@ use App\Category;
 
 use Illuminate\Http\Request as Req;
 use Validator;
+use Auth;
+use Storage;
 
 class CategoryController extends Controller {
 
@@ -51,6 +53,8 @@ class CategoryController extends Controller {
 		$input = Request::all();
 
 		$newCategory = Category::create($input);
+		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' created the category '.$newCategory->name;
+		Storage::disk('local')->append('actions_log.log', $logMessage);
 		return redirect('categories');
 	}
 
@@ -106,6 +110,8 @@ class CategoryController extends Controller {
 			return redirect()->back();
 		$category = Category::find($id);
 		$category->delete();
+		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' deleted the category '.$category->name;
+		Storage::disk('local')->append('actions_log.log', $logMessage);
 		return redirect('categories');
 	}
 

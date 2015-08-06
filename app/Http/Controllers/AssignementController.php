@@ -9,6 +9,7 @@ use App\User_quiz;
 use App\Given_answers;
 use Auth;
 use Illuminate\Http\Request;
+use Storage;
 
 class AssignementController extends Controller {
 
@@ -172,6 +173,13 @@ class AssignementController extends Controller {
 				/**
 				* userQuiz do determine what quizzes were done for respective assignement
 				*/
+
+				$logMessage = \Carbon\Carbon::now().' :: User: '.
+				Auth::user()->name.' '.Auth::user()->surname.
+				' assigned '.$user->type->type.': '.
+				$user->name.' '.$user->surname.' the '.$job->title.' job';
+
+				Storage::disk('local')->append('actions_log.log', $logMessage);
 
 				\Mail::send('emails.assigned_user', compact('user', 'job'), function($message) use ($user, $job)
 				{

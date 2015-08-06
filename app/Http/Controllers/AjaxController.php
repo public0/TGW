@@ -410,7 +410,7 @@ class AjaxController extends Controller {
 
 						if(isset($row->started_at)) {
 							$timestamp = '<span class="hidden">'.strtotime(date("d-m-Y", strtotime($row->started_at)).date("h:m:s", strtotime($row->started_at))).'-</span>';
-                            $date = date("d-m-Y", strtotime($row->started_at));
+                            $date = $timestamp.date("d-m-Y", strtotime($row->started_at));
                             $time = date("h:m:s", strtotime($row->started_at));
                             $row->started_at = ($row->started_at != '0000-00-00 00:00:00')?$date.'<br>'.$time:\Lang::get('messages.not_started');
 						}

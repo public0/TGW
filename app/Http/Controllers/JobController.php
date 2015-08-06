@@ -9,6 +9,7 @@ use App\Job;
 use App\Quiz;
 use App\Category;
 use App\User;
+use Storage;
 
 class JobController extends Controller {
 
@@ -83,6 +84,10 @@ class JobController extends Controller {
 		$input = $request->all();
 		$input['user_id'] = Auth::user()->id;
 		$newJob = Job::create($input);
+
+		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' created the job '.$newJob->title;
+		Storage::disk('local')->append('actions_log.log', $logMessage);
+
 		if(!empty($input['job_officer'])) {
 			$newJob->officers()->attach($input['job_officer']);
 		}
@@ -197,6 +202,8 @@ class JobController extends Controller {
 		$job = Job::find($id);
 		$job->quizzes()->detach();
 		$job->delete();
+		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' deleted the job '.$job->title;
+		Storage::disk('local')->append('actions_log.log', $logMessage);
 		return redirect('jobs');
 	}
 
