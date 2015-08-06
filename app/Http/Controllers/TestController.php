@@ -75,6 +75,8 @@ class TestController extends Controller {
                     \Session::forget('submitted');
                 } else {
                     $user_quizz->done = 1;
+                    $user_quizz->final = 1;
+
                     $user_quizz->save();
                 }
             }
