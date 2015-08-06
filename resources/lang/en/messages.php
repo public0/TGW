@@ -107,4 +107,5 @@ return [
     'change_password' => 'Change Password',
     'new_password' => 'New Password',
     'gata' => 'Score&nbsp;Status',
+    'testing_environment' => 'Testing Environment',
 ];

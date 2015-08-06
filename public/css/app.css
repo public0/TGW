@@ -6279,5 +6279,10 @@ input.column_filter.no {
   padding-left: 0px !important;
 }
 
+.center_span {
+  margin-left:50%;
+  position:absolute;
+}
+
 .btn-action {
 }

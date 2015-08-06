@@ -26,7 +26,11 @@
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">
+		@if(\Config::get('app.testing_server')) 
+			<span class="label label-warning center_span">{{ Lang::get('messages.testing_environment') }}</span>
+		@endif
 		<div class="container-fluid">
+
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
 					<span class="sr-only">Toggle Navigation</span>
