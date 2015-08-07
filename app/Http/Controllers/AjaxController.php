@@ -344,9 +344,14 @@ class AjaxController extends Controller {
 		}
 		// Show Assignments - Quizzes only for selected job
 		$assJobId = DB::table('assignements')->where('id','=', $aid)->lists('assigned_job');
-		$data->data = Assignement::with(['quizzes' => function($query) use ($qid){
-			$query->whereIn('quiz_id', [$qid]);
-		}])->where('assigned_job','=', $assJobId[0])->orderBy('id', 'DESC')->get();
+
+		if(!empty($assJobId)) {
+			$data->data = Assignement::with(['quizzes' => function($query) use ($qid){
+				$query->whereIn('quiz_id', [$qid]);
+			}])->where('assigned_job','=', $assJobId[0])->orderBy('id', 'DESC')->get();			
+		} else {
+			$data->data = [];
+		}
 		// Show Assignments - Quizzes only for selected job
 		$score = [];
 		$i = 1;
@@ -452,7 +457,8 @@ class AjaxController extends Controller {
 				}
 			}
 		}
-		$data->data = $data->data->values();
+
+		$data->data = (!empty($data->data))?$data->data->values():[];
 
 		return response()->json($data);
 

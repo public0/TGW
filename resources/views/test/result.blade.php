@@ -51,13 +51,20 @@
                                   <tr>
                                    
 					    			
-                                       @if($answer->id==$corect && $answer->corect==1 || $answer->id==$corect && $answer->corect==0 )
+                                       @if($answer->id == $corect && $answer->corect == 1 || $answer->id == $corect && $answer->corect == 0 )
    								       <td> 
    								       	    <span class="label {{($answer->correct)?'label-success':'label-danger'}}">
 					    					{{Lang::get('messages.answer')}} {{$z}}:&nbsp;&nbsp;
 					    					</span>&nbsp; {{ $answer->answer }}
 					    				</td>	
-					    				@else
+					    				@else @if($question->question_type_id != 3 ) 
+                                 		 <td>
+                                 		    
+                                 	 		<span class="label label-default">
+					    					{{Lang::get('messages.answer')}} {{$z}}:&nbsp;&nbsp;
+					    					</span> &nbsp; {{$answer->answer}}
+                                 		 </td>
+                                 		 @else 
                                  		 <td>
                                  		    
                                  	 		<span class="label label-default">
@@ -65,7 +72,8 @@
 					    					</span> &nbsp; {{$answer->answer}}
                                  		 </td>
                                  	@endif
-
+                                 	@endif
+                                 	
                                   </tr>
                                  
 					    		<?php $z++; ?>
