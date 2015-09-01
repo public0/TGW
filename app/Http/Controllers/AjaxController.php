@@ -10,7 +10,7 @@ use App\User;
 use App\Assignement;
 use App\Job;
 use Auth;
-
+use App\GaussReport;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -310,14 +310,14 @@ class AjaxController extends Controller {
 				}
 			}
 
-
+            $job_quiz = $row->quizzes;
 			if(!$row->show) {
 				unset($data->data[$key]);
 			} else {
 				/* Populate */
 				$row->jobTitle = $row->job->title;
 				$row->period = explode(' ', $row->job->start_at)[0].' - '.explode(' ', $row->job->end_at)[0];
-				$row->jobQuizzes = view('ajax/assignments_quizzes', compact('row', 'user', 'uCat'))->render();
+				$row->jobQuizzes = view('ajax/assignments_quizzes', compact('row', 'user', 'uCat', 'job_quiz'))->render();
 				$row->candidates = view('ajax/assignment_candidates', compact('row'))->render();
 
 			//  //jobs_assignments	
@@ -517,6 +517,22 @@ class AjaxController extends Controller {
 		}
 	
 		return response()->json($uJobs);
+	}
+	
+	public function getReports() {
+		$data = new \stdClass;
+		$user = Auth::user();
+		$gauss_id = [];
+		$gauss_reports = GaussReport::all();
+        $data->data = Quiz::all();
+		foreach($gauss_reports as $report){
+			$gauss_id[] = $report->quiz_id;
+		}  
+		foreach($data->data as $row) {
+	            $row->name = $row->name;
+				$row->actions = view('ajax/reports_view', compact('row','gauss_id'))->render();
+			}
+		return response()->json($data);
 	}
 
 }

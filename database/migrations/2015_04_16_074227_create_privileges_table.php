@@ -288,7 +288,43 @@ class CreatePrivilegesTable extends Migration {
 		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
 		        )
 		    );
-		echo "Done inserting privileges.\n";
+		
+				/**
+		* Reports privilege
+		*/
+		DB::table('privileges')->insert(
+		        array(
+		            'privilege' => 'Reports',
+		            'type' => $this->types[0],
+		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
+		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
+		        )
+		    );
+		DB::table('privileges')->insert(
+		        array(
+		            'privilege' => 'Reports',
+		            'type' => $this->types[1],
+		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
+		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
+		        )
+		    );
+		DB::table('privileges')->insert(
+		        array(
+		            'privilege' => 'Reports',
+		            'type' => $this->types[2],
+		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
+		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
+		        )
+		    );
+		DB::table('privileges')->insert(
+		        array(
+		            'privilege' => 'Reports',
+		            'type' => $this->types[3],
+		            'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
+		            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
+		        )
+		    );
+		echo "Done inserting Privileges.\n";
 		$count = DB::table('privileges')->count();
 
 		for ($i=1; $i <= $count; $i++) { 
@@ -308,6 +344,8 @@ class CreatePrivilegesTable extends Migration {
 			            'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
 			        )
 			    );
+	
+	
 		}
 		echo "Done inserting admins.\n";
 

@@ -75,8 +75,6 @@ class TestController extends Controller {
                     \Session::forget('submitted');
                 } else {
                     $user_quizz->done = 1;
-                    $user_quizz->final = 1;
-
                     $user_quizz->save();
                 }
             }
@@ -135,8 +133,8 @@ class TestController extends Controller {
         $user_quizz = User_quiz::where('user_id', Auth::user()->id)->where('done', 0)->first();
         $currentQuiz = Quiz::find($input['quiz']);
         $eval = [];
-        $has_freetext = FALSE;
         if(isset($input['question'])) {
+            $has_freetext = FALSE;
             foreach ($currentQuiz->questions as $question) {
                 if(array_key_exists($question->id, $input['question'])) {
                     $correctAnswers = $question->correctAnswers->toArray();

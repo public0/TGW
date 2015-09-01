@@ -14,7 +14,6 @@ use App\Category;
 use App\User_type;
 use App\Privileges;
 use Auth;
-use Storage;
 
 class UserController extends Controller {
 
@@ -44,16 +43,16 @@ class UserController extends Controller {
 
 		switch (Auth::user()->user_type_id) {
 			case 1:
-					$types += User_Type::orderBy('type', 'ASC')->where('id', '!=', 5)->lists('type','id');
+					$types += User_Type::orderBy('type', 'DESC')->where('id', '!=', 5)->lists('type','id');
 				break;
 			case 2:
-					$types += User_Type::whereIn('id', [3, 6, 8])->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
+					$types += User_Type::whereIn('id', [3, 6, 8])->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
 				break;
 			case 3:
-					$types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
+					$types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
 				break;
 			case 8:
-					$types += User_Type::whereIn('id', [3, 6])->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
+					$types += User_Type::whereIn('id', [3, 6])->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
 				break;
 			
 			default:
@@ -101,8 +100,6 @@ class UserController extends Controller {
 //		$input['login'] = strtolower($input['name'].'.'.$input['surname']);
 		$input['login'] = strtolower($input['login']);
         $input['status'] = 1;
-        $input['name'] = ucfirst($input['name']);
-        $input['surname'] = ucfirst($input['surname']);
 		$input['password'] = Hash::make(strtolower($input['login']));
 		// last_pass_change
 		$input['last_pass_change'] = \Carbon\Carbon::now()->toDateTimeString();
@@ -172,10 +169,6 @@ class UserController extends Controller {
 			break;
 
 		}
-
-		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' created '.$newUser->type->type.': '.$newUser->name.' '.$newUser->surname;
-		Storage::disk('local')->append('actions_log.log', $logMessage);
-
 		$newUser->privileges()->attach($privilegesArray);
 		if(isset($input['categories'])) {
 			$newUser->categories()->attach($input['categories']);
@@ -222,24 +215,24 @@ class UserController extends Controller {
 		$types = [ 0 => \Lang::get('messages.select')];
 		switch (Auth::user()->user_type_id) {
 			case 1:
-					   $types += User_Type::orderBy('type', 'ASC')->where('id', '!=', 5)->lists('type','id');
+					   $types += User_Type::orderBy('type', 'DESC')->where('id', '!=', 5)->lists('type','id');
                 break;
             case 2:
                     if($user->user_type_id == 6){
-                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');}
+                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');}
                     else{
-                        $types += User_Type::whereIn('id', [3,8])->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
+                        $types += User_Type::whereIn('id', [3,8])->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
                     }
                 break;
             case 3: 
  
-                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
+                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
                 break;
             case 8:
                     if($user->user_type_id == 6){
-                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');}
+                        $types += User_Type::where('id', 6)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');}
                     else{
-                        $types += User_Type::where('id', 3)->where('id', '!=', 5)->orderBy('type', 'ASC')->lists('type','id');
+                        $types += User_Type::where('id', 3)->where('id', '!=', 5)->orderBy('type', 'DESC')->lists('type','id');
                     }
  
                 break;
@@ -295,12 +288,12 @@ class UserController extends Controller {
 
 		}
 		$user->user_type_id = $input['user_type_id'];
-		$user->name = ucfirst($input['name']);
-		$user->surname = ucfirst($input['surname']);
+		$user->name = $input['name'];
+		$user->surname = $input['surname'];
 		$user->login = $input['login'];
 
-		//$pass = $input['password'];
-		//$passConf = $input['password_confirmation'];
+		#$pass = $input['password'];
+		#$passConf = $input['password_confirmation'];
 		
 		$user->email = $input['email'];
 		$user->phone = $input['phone'];
@@ -381,9 +374,7 @@ class UserController extends Controller {
         $user = User::find($id);
         $user->status = $stat;
         $user->save();
-		$statMessage = ($stat)?'activated':'deactivated';        
-		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname." $statMessage ".$user->type->type.': '.$user->name.' '.$user->surname;
-		Storage::disk('local')->append('actions_log.log', $logMessage);
+        
  
         return redirect('users');       
     }

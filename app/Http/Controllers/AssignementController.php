@@ -9,7 +9,6 @@ use App\User_quiz;
 use App\Given_answers;
 use Auth;
 use Illuminate\Http\Request;
-use Storage;
 
 class AssignementController extends Controller {
 
@@ -91,19 +90,25 @@ class AssignementController extends Controller {
 		//->where('start_at','<',$date)
 		//->where('end_at','>',$yesterday)
 		//->lists('title', 'id');
-		$jobb = Job::where('status', '1')
-		->where('start_at','<',$date)
-		->where('end_at','>',$yesterday)->orderBy('title', 'ASC')->get();
+		$jobb =\DB::table('jobs')
+        ->leftJoin('category_job','jobs.id','=','category_job.job_id')
+        ->where('jobs.status', '1')
+        ->where('jobs.start_at','<',$date)
+		->where('jobs.end_at','>',$yesterday)
+		->select('jobs.*','category_job.category_id')
+		->orderBy('jobs.title', 'ASC')->get();
+
 		$jobs['0'] = \Lang::get('messages.select');
 		foreach ($jobb as $jobss) {
+			
 			$countJobs = Assignement::where('assigned_job', $jobss->id)->count() ; 
         
-			if($countJobs < $jobss->candidates){
+			if($countJobs < $jobss->candidates && $jobss->category_id != 1){
               $jobs[$jobss->id] = $jobss->title ;
 			}
 	       
 		}
-		$users = User::select(\DB::raw("CONCAT(name, ' ', surname) AS full_name, id"))->where('user_type_id',6)->where('status', 1)->orderBy('name', 'ASC')->lists('full_name', 'id');
+		$users = User::select(\DB::raw("CONCAT(name, ' ', surname) AS full_name, id"))->where('user_type_id',6)->where('status', 1)->lists('full_name', 'id');
 
 		return view('assignement.new_assignement', compact('jobs', 'users'));
 	}
@@ -173,13 +178,6 @@ class AssignementController extends Controller {
 				/**
 				* userQuiz do determine what quizzes were done for respective assignement
 				*/
-
-				$logMessage = \Carbon\Carbon::now().' :: User: '.
-				Auth::user()->name.' '.Auth::user()->surname.
-				' assigned '.$user->type->type.': '.
-				$user->name.' '.$user->surname.' the '.$job->title.' job';
-
-				Storage::disk('local')->append('actions_log.log', $logMessage);
 
 				\Mail::send('emails.assigned_user', compact('user', 'job'), function($message) use ($user, $job)
 				{

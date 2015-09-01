@@ -107,5 +107,16 @@ return [
     'change_password' => 'Change Password',
     'new_password' => 'New Password',
     'gata' => 'Score&nbsp;Status',
-    'testing_environment' => 'Testing Environment',
+     'testing_environment' => 'Testing Environment',
+    'reports' => 'Reports',
+    'very_bad' => 'Very bad',
+    'bad' => 'Bad',
+    'medium' => 'Medium',
+    'good' => 'Good',
+    'very_good' => 'Very good',
+    'points' => '(Points)',
+    'report_score' => 'Choose the interval for gauss curve.',
+    'generate_report' => 'Generate Report',
+    'show_report' => 'Result',
+    'report_error' => 'Interval must contain only numbers.'
 ];

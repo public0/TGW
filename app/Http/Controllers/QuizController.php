@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 use App\Quiz;
 use App\Category;
 use Auth;
-use Storage;
 use App\User;
-
 class QuizController extends Controller {
 
 	/**
@@ -54,7 +52,7 @@ class QuizController extends Controller {
 		if(!in_array(5, $this->privsArray))
 			return redirect()->back();
 		$categories = [ 0 => \Lang::get('messages.select')];
-		$categories += Category::orderBy('name','ASC')->lists('name','id');
+		$categories += Category::lists('name','id');
 		$user = Auth::user()->id;
 
 		$user_type_id = Auth::user()->user_type_id;
@@ -106,8 +104,6 @@ class QuizController extends Controller {
 			]);
 		}
 		$newQuiz = Quiz::create($input);
-		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' created the quiz '.$newQuiz->name;
-		Storage::disk('local')->append('actions_log.log', $logMessage);
 		return redirect('quizzes');
 	}
 
@@ -132,7 +128,7 @@ class QuizController extends Controller {
 	{
 		if(!in_array(7, $this->privsArray))
 			return redirect()->back();
-		$categories = Category::orderBy('name','ASC')->lists('name','id');
+		$categories = Category::lists('name','id');
 
 		$user_type_id = Auth::user()->user_type_id;
 		if($user_type_id == 4){
@@ -233,8 +229,6 @@ class QuizController extends Controller {
 			return redirect()->back();
 		$quiz = Quiz::find($id);
 		$quiz->delete();		
-		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' deleted the quiz '.$quiz->name;
-		Storage::disk('local')->append('actions_log.log', $logMessage);
 		return redirect('quizzes');
 	}
 

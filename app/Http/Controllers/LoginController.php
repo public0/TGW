@@ -134,38 +134,31 @@ class LoginController extends Controller {
         $newAssignement = NULL;
         if($user->user_type_id == 5) {
             $toTest = FALSE;
-            $job = Job::find(1);
-            $quizzes = $job->quizzes->toArray();
+            //$job = Job::find(1);
+            $category = Category::find(1);
+           
+            $jobs = $category->jobs;
+            foreach($jobs as $job){
+               
+               //$quizzes = $job->quizzes->toArray();
+           
 
-            foreach ($quizzes as $quiz) {
+              //$quizzes = Quiz::where('category_id',1)->get();
+            foreach ($job->quizzes->toArray() as $quiz) {
                 if(($quiz['from'] < \Carbon\Carbon::now()->toDateTimeString()) && $quiz['to'] > \Carbon\Carbon::now()->toDateTimeString()) {
                     $user_quiz = User_quiz::where('user_id', $user->id)
                     ->where('quiz_id', $quiz['id'])->first();
 //                    ->where('done', 1)->first();
                     if(!$user_quiz) {
                         $toTest = TRUE;
-                    }
-                    /**
-                    * Assign this quiz to user
-                    */
-                }
-            }
-            if($toTest) {
-            $assignementData = [
-                'assigned_job'  => 1,
-                'assigned_user' => $user->id,
-            ];
-
-            $newAssignement = Assignement::create($assignementData);
-            $user->assigned = 1;
-            $user->save();
-
-                foreach ($quizzes as $quiz) {
-                    if(($quiz['from'] < \Carbon\Carbon::now()->toDateTimeString()) && $quiz['to'] > \Carbon\Carbon::now()->toDateTimeString()) {
-                        /**
-                        * Assign this quiz to user
-                        */
-                        $toTest = TRUE;
+                        $ready[] = $job->id;
+                         $assignementData = [
+                         'assigned_job'  => $job->id,
+                         'assigned_user' => $user->id,
+                         ];
+                        $newAssignement = Assignement::create($assignementData);
+                        $user->assigned = 1;
+                        $user->save();
                         $userQuizData = [
                             'user_id' => $user->id,
                             'quiz_id' => $quiz['id'],
@@ -173,18 +166,28 @@ class LoginController extends Controller {
                             'mark' => 0,
                             'done' => 0
                         ];
-                        $userQuiz = User_quiz::create($userQuizData);
-
+                        $userQuiz = User_quiz::create($userQuizData);    
 
                     }
+                    /**
+                    * Assign this quiz to user
+                    */
+                    
                 }
 
-                return redirect('test');
+
+
+            }
+           }
+            if($toTest) {
+                
+               return redirect('test');
             } else {
                 //Auth::user()->timestamps = false;
                 return redirect()->intended('/');
             }
 
+        
         } else {
             return redirect()->intended('/');
         }

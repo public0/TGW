@@ -9,7 +9,6 @@ use App\Job;
 use App\Quiz;
 use App\Category;
 use App\User;
-use Storage;
 
 class JobController extends Controller {
 
@@ -37,11 +36,10 @@ class JobController extends Controller {
 			return redirect()->back();
 		$quizzes = Quiz::where('category_id', '!=', 1)->where('status',1)
 			->orWhere('category_id', 1)->where('status',1)
-			->orderBy('name','asc')
 			//->where('from', '<',\Carbon\Carbon::now())
 			//->where('to', '>',\Carbon\Carbon::now())
 			->lists('name', 'id');
-		$officers = User::select('id', \DB::raw('CONCAT(name, " ", surname) AS name'))->whereIn('user_type_id', [3, 8])->where('status',1)->orderBy('name','asc')->lists('name','id') ;
+		$officers = User::select('id', \DB::raw('CONCAT(name, " ", surname) AS name'))->whereIn('user_type_id', [3, 8])->where('status',1)->lists('name','id') ;
 		return view('jobs.new_job', compact('quizzes', 'officers'));
 	}
 
@@ -84,10 +82,6 @@ class JobController extends Controller {
 		$input = $request->all();
 		$input['user_id'] = Auth::user()->id;
 		$newJob = Job::create($input);
-
-		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' created the job '.$newJob->title;
-		Storage::disk('local')->append('actions_log.log', $logMessage);
-
 		if(!empty($input['job_officer'])) {
 			$newJob->officers()->attach($input['job_officer']);
 		}
@@ -202,8 +196,6 @@ class JobController extends Controller {
 		$job = Job::find($id);
 		$job->quizzes()->detach();
 		$job->delete();
-		$logMessage = \Carbon\Carbon::now().' :: User: '.Auth::user()->name.' '.Auth::user()->surname.' deleted the job '.$job->title;
-		Storage::disk('local')->append('actions_log.log', $logMessage);
 		return redirect('jobs');
 	}
 

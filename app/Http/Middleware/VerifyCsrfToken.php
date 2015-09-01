@@ -14,6 +14,12 @@ class VerifyCsrfToken extends BaseVerifier {
 	 */
 	public function handle($request, Closure $next)
 	{
+		if($request->is('api/*')) {
+			
+			if(!$this->tokensMatch($request)) {
+				return $next($request);
+			}
+		}
 		return parent::handle($request, $next);
 	}
 

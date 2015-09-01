@@ -38,6 +38,12 @@ return [
     'read' => 'Read',
     'update' => 'Update',
     'delete' => 'Delete',
+    
+    'reports' => 'Reports',
+    'show_reports' => 'Show Reports',
+    'new_report' => 'New Report',
+    'edit_report' => 'Edit Report',
+    'show_report' => 'Show Report',
 
     'c' => 'Create',
     'r' => 'Read',

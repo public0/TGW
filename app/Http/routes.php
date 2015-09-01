@@ -14,6 +14,12 @@
 Route::get('/', 'HomeController@index');
 Route::get('auth/login', 'LoginController@login');
 Route::post('auth/login', 'LoginController@postLogin');
+Route::get('api/get_token', 'ApiController@getToken');
+
+//Route::get('api/get_heramus_token/{token?}', 'ApiController@getHeramusToken');
+Route::get('api/get_quiz_results','ApiController@getQuizResults');
+Route::any('api/store_candidate','ApiController@storeCandidate');
+
 
 //Route::get('home', 'LoginController@index');
 /*
@@ -21,7 +27,7 @@ Route::post('auth/login', 'LoginController@postLogin');
 | Users need to be Authenticated to view these routes
 |--------------------------------------------------
 */
-Route::group(['middleware' => 'auth'], function() {
+#Route::group(['middleware' => 'auth'], function() {
 	Route::get('auth/reset', 'LoginController@resetPassword');
 	Route::post('auth/reset', 'LoginController@postResetPassword');
 
@@ -113,7 +119,15 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::get('ajax/get_jobs', 'AjaxController@getJobs');
 	Route::get('ajax/assigned_users', 'AjaxController@assignedUsers');
 
-});
+    Route::get('reports','ReportController@index');
+	Route::get('report/create','ReportController@create');
+	Route::put('report/store','ReportController@store');
+	Route::get('report/edit/{id}','ReportController@edit');
+	Route::post('report/update/{id_rap}','ReportController@update');
+	Route::get('ajax/get_reports', 'AjaxController@getReports');
+	Route::get('reports/show_report/{id}', 'ReportController@show_report');
+
+#});
 
 Route::controllers([
 	'auth' => 'Auth\AuthController',

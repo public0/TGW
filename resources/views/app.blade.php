@@ -26,11 +26,10 @@
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">
-		@if(\Config::get('app.testing_server')) 
+	@if(\Config::get('app.testing_server')) 
 			<span class="label label-warning center_span">{{ Lang::get('messages.testing_environment') }}</span>
 		@endif
 		<div class="container-fluid">
-
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
 					<span class="sr-only">Toggle Navigation</span>
@@ -119,6 +118,19 @@
 							@if(in_array(21, $privsArray))
 							<li><a href="{{ url('job/create') }}">{{ Lang::get('links.new_job') }}</a></li>
 							@endif
+						</ul>
+					</li>
+					@endif
+					@if((int)array_intersect([29,30], $privsArray) > 0)
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Lang::get('links.reports') }}</a>
+						<ul class="dropdown-menu" role="menu">
+							@if(in_array(30, $privsArray))
+							<li><a href="{{ url('reports') }}">{{ Lang::get('links.show_reports') }}</a></li>
+							@endif
+							<!--@if(in_array(29, $privsArray))
+							<li><a href="{{ url('report/create') }}">{{ Lang::get('links.new_report') }}</a></li>
+							@endif-->
 						</ul>
 					</li>
 					@endif

@@ -16,6 +16,8 @@ class CreateUsersTable extends Migration {
 		{
 			$table->increments('id');
 			$table->smallInteger('user_type_id');
+			$table->integer('heramus_user_id')->default(0);
+			$table->boolean('heramus_sent')->default(0);
 			$table->string('name');
 			$table->string('surname');
 			$table->string('login');
